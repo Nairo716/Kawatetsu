@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>川鉄すごろく — 川島県 社長すごろく</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root{
+  --font:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --win-top:#3466e0; --win-bot:#0f2b86; --win-edge:#0a1a55; --gold:#ffe14d; --red:#e5322d; --blue:#2563eb; --yel:#f5c518;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{font-family:var(--font);font-weight:800;color:#fff;background:#5fb4e8;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---- 桃鉄風ウィンドウ ---- */
+.win{background:linear-gradient(180deg,var(--win-top),var(--win-bot));border:3px solid #fff;border-radius:14px;box-shadow:0 0 0 3px var(--win-edge),0 8px 18px rgba(0,0,0,.35);color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+.pc{display:inline-block;width:.85em;height:.85em;border-radius:3px;background:var(--pc);border:2px solid #fff;margin-right:.35em;vertical-align:-.08em}
+.yen{color:var(--gold)}
+.cmd{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:8px 10px 8px 30px;font-size:17px;position:relative;text-shadow:inherit}
+.cmd small{display:block;font-size:12px;font-weight:500;opacity:.85}
+.cmd::before{content:"";position:absolute;left:9px;top:13px;border:8px solid transparent;border-left:12px solid var(--gold);opacity:0}
+.cmd:hover:not([disabled]),.cmd:focus-visible{background:rgba(255,255,255,.16);outline:none}
+.cmd:hover:not([disabled])::before,.cmd:focus-visible::before{opacity:1;animation:poke .5s ease-in-out infinite alternate}
+.cmd[disabled]{opacity:.45;cursor:default}
+.cmd.main{font-size:22px}
+.cmd.back{color:var(--gold)}
+.cmd.destcmd{background:rgba(229,50,45,.35)}
+@keyframes poke{to{transform:translateX(3px)}}
+.sqm{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:2px solid #fff}
+.sqm.t-blue{background:var(--blue)}.sqm.t-red{background:var(--red)}.sqm.t-card{background:var(--yel)}.sqm.t-prop{background:#fff;border-color:var(--red)}
+
+/* ---- タイトル（駅名標） ---- */
+.screen{position:fixed;inset:0;display:grid;place-items:center;padding:20px;overflow:auto;z-index:5;background:#5fb4e8 radial-gradient(circle at 50% 120%,#a9db78 0 45%,transparent 45.2%)}
+.sign{width:min(560px,100%);background:#fff;color:#1b2333;border-radius:12px;overflow:hidden;box-shadow:0 0 0 4px #1b2333,0 18px 40px rgba(10,26,85,.35);text-shadow:none}
+.sign-top{padding:24px 18px 12px;text-align:center}
+.sign-top .kana{font-size:15px;letter-spacing:.35em;color:#5b6577}
+.sign-top h1{margin:2px 0 0;font-size:clamp(34px,10.5vw,74px);font-weight:900;letter-spacing:.04em;line-height:1.1;white-space:nowrap}
+.sign-top .roma{font-size:14px;letter-spacing:.12em;color:#5b6577;margin-top:4px}
+.sign-bar{background:#1663d6;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:8px 14px}
+.sign-bar span{display:flex;align-items:center;gap:6px}
+.sign-bar small{font-weight:500;opacity:.85;font-size:11px}
+.sign-body{padding:18px 22px 22px;display:grid;gap:12px}
+.sign-body p.lead{margin:0;color:#3a4458;line-height:1.7;font-size:15px;font-weight:500}
+.field{display:grid;gap:4px;font-size:13px;color:#5b6577}
+input,select{font:inherit;font-size:16px;font-weight:800;padding:10px 12px;border:3px solid #cfd5e0;border-radius:10px;background:#fff;color:#1b2333;width:100%}
+.btn{border:3px solid #1b2333;background:#fff;color:#1b2333;border-radius:10px;padding:10px 14px;font-size:16px;box-shadow:0 3px 0 #1b2333}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #1b2333}
+.btn.primary{background:var(--red);border-color:#7a1010;color:#fff;box-shadow:0 3px 0 #7a1010}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.45}
+.join{display:grid;grid-template-columns:1fr auto;gap:8px}
+.join input{text-transform:uppercase;letter-spacing:.15em}
+details{font-size:14px;color:#3a4458;line-height:1.7;font-weight:500}
+details summary{cursor:pointer;font-weight:800}
+details ul{padding-left:1.2em;margin:.4em 0}
+#status{min-height:1.2em;font-size:14px;color:#1663d6;text-align:center;margin:0}
+
+/* ---- ロビー ---- */
+.lobbycard{width:min(520px,100%);padding:16px 18px 20px;display:grid;gap:14px}
+.lobbycard h2{margin:0;font-size:24px;font-weight:900}
+.room{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.room span{font-size:13px}
+.room b{font-size:30px;letter-spacing:.2em;background:#0a1a55;color:var(--gold);padding:2px 12px;border-radius:8px;border:2px solid #fff}
+.note{margin:0;font-size:14px;font-weight:500;line-height:1.6;opacity:.92}
+#lobbyList{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+#lobbyList li{display:flex;align-items:center;padding:9px 12px;background:rgba(0,0,0,.22);border-radius:10px;border-left:8px solid var(--pc);font-size:17px}
+#lobbyList i,.pn i{font-style:normal;font-size:11px;font-weight:500;border:1px solid rgba(255,255,255,.6);border-radius:4px;padding:0 5px;margin-left:6px}
+#lobbyList .x{margin-left:auto;border:0;background:none;font-size:22px;padding:0 6px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row select{width:auto}
+#addHumanRow{display:grid;grid-template-columns:1fr auto;gap:8px}
+#lobbyCtl{display:grid;gap:12px}
+#bStart{font-size:20px;padding:12px}
+
+/* ---- ゲーム画面 ---- */
+#game{position:fixed;inset:0}
+#map{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none;background:#5fb4e8}
+#map .lbl{font-family:var(--font);font-size:14px;font-weight:800;fill:#1b2333;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+#map .plate{font-family:var(--font);font-size:19px;font-weight:900;fill:#fff;paint-order:stroke;stroke:#0a1a55;stroke-width:6px;stroke-linejoin:round;pointer-events:none}
+#map .mk{font-family:var(--font);font-size:20px;font-weight:900;fill:#fff;pointer-events:none}
+#map .mk.dark{fill:#5a3b00}
+#map .tname{font-family:var(--font);font-size:13px;font-weight:900;fill:#fff;paint-order:stroke;stroke:#0a1a55;stroke-width:4px}
+#map .flagt{font-family:var(--font);font-size:12px;font-weight:900;fill:#fff}
+#map .st{cursor:pointer}
+#map .token,#map .flag{pointer-events:none}
+#map .pulse{animation:pulse 1.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+#map .opt{animation:pulse .9s ease-in-out infinite;transform-box:fill-box;transform-origin:center;pointer-events:none}
+@keyframes pulse{50%{transform:scale(1.15);opacity:.55}}
+
+.hud{position:absolute;z-index:3}
+#dateWin{left:10px;top:10px;padding:6px 14px 8px;display:grid;justify-items:center;line-height:1.1;min-width:96px}
+#dYear{font-size:13px}
+#dMonth{font-size:32px;font-weight:900;color:var(--gold)}
+#dLeft{font-size:11px;font-weight:500}
+#dSeason{font-size:13px;border-radius:999px;padding:0 8px;margin:1px 0 2px}
+#dSeason:empty{display:none}
+#dSeason.summer{background:#ff8a1c;border:2px solid #fff}
+#dSeason.winter{background:#7fc8ff;color:#0a1a55;text-shadow:none;border:2px solid #fff}
+.senote{display:inline-block;margin-top:6px;font-size:15px;border-radius:999px;padding:1px 12px;border:2px solid #fff}
+.senote.summer{background:#ff8a1c}
+.senote.winter{background:#7fc8ff;color:#0a1a55;text-shadow:none}
+#map{transition:filter .8s}
+#game.summer #map{filter:saturate(1.25)}
+#game.winter #map{filter:saturate(.45) brightness(1.12)}
+#destWin{right:10px;top:10px;padding:6px 16px 8px;min-width:200px;text-align:center}
+#destWin .tag{display:inline-block;background:var(--red);border:2px solid #fff;border-radius:999px;padding:0 10px;font-size:13px}
+#destName{display:block;font-size:30px;font-weight:900;color:#fff;line-height:1.15}
+#destName::after{content:"駅";font-size:15px;margin-left:2px}
+#destName.noeki::after{content:none}
+.bh{flex-wrap:wrap}
+.bh .yen{white-space:nowrap}
+#destLeft{font-size:13px;font-weight:500}
+#destLeft b{color:var(--gold);font-size:18px;font-weight:900}
+#roomTag{font-size:11px;font-weight:500;opacity:.8}
+#players{left:10px;top:128px;list-style:none;margin:0;padding:0;display:grid;gap:8px;width:230px}
+#players.many{gap:5px;max-height:calc(100% - 250px);overflow-y:auto;overflow-x:hidden;padding:0 6px 6px 0}
+#players.many .pw{padding:3px 9px 4px}
+#players.many .pn{font-size:13px}
+#players.many .pm{font-size:16px}
+#players.many .pa{display:none}
+.pw{padding:6px 10px 7px;border-left:10px solid var(--pc)}
+.pw.cur{border-color:var(--gold);border-left-color:var(--pc);box-shadow:0 0 0 3px var(--win-edge),0 0 0 6px var(--gold)}
+.pn{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pn .pc{display:none}
+.pm{font-size:19px;font-weight:900;color:var(--gold)}
+.pm.neg{color:#ff8a80}
+.pa{font-size:11px;font-weight:500}
+.bb{margin-left:4px}
+#msgWin{left:10px;right:300px;bottom:10px;min-height:92px;padding:12px 18px 14px;font-size:18px;line-height:1.55;cursor:default}
+#msgText{display:block}
+#msgText.k-bad,#msgText.k-bonbi{color:#ffd0cc}
+#msgText.k-arrive,#msgText.k-dest,#msgText.k-roulette{color:var(--gold)}
+#msgWin.more::after{content:"▼";position:absolute;right:16px;bottom:6px;color:var(--gold);animation:poke .5s infinite alternate}
+#cmdWin{right:10px;bottom:10px;width:280px;max-height:calc(100% - 140px);overflow:auto;padding:8px 6px 8px}
+#cmdWin .ch{font-size:15px;padding:4px 10px 8px;border-bottom:2px dashed rgba(255,255,255,.4);margin-bottom:4px}
+#cmdWin .wait{margin:6px 10px;font-size:13px;font-weight:500}
+.optlist{max-height:45vh;overflow:auto}
+.cardcmd{color:#fff6c4}
+#zoomWin{right:300px;bottom:118px;display:flex;gap:4px;padding:4px}
+#zoomWin button{background:none;border:0;width:40px;height:36px;border-radius:8px;font-size:15px}
+#zoomWin button:hover{background:rgba(255,255,255,.18)}
+
+#buyWin{position:fixed;z-index:12;left:50%;top:50%;transform:translate(-50%,-55%);width:min(560px,94vw);max-height:76vh;overflow:auto;padding:12px 10px}
+.bh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:0 8px 8px;border-bottom:2px dashed rgba(255,255,255,.4)}
+.bt{font-size:21px;font-weight:900}
+.bcols,.brow{display:grid;grid-template-columns:1fr 120px 76px;gap:8px;align-items:center}
+.bcols{font-size:12px;font-weight:500;padding:6px 10px 2px 30px;opacity:.85}
+.brow{font-size:16px}
+.brow > span:nth-child(2),.brow > span:nth-child(3),.bcols span:nth-child(2),.bcols span:nth-child(3){text-align:right}
+.brow.owned{opacity:.7}
+.own{display:inline-block;font-size:12px;background:var(--pc);border:2px solid #fff;border-radius:6px;padding:0 6px;text-shadow:0 1px 0 rgba(0,0,0,.5);white-space:nowrap}
+#buyWin .wait{font-size:12px;font-weight:500;margin:4px 10px 0}
+
+/* ---- 演出 ---- */
+#dice,#arrive,#banner,#roul,#evflash{position:fixed;inset:0;z-index:20;display:grid;place-items:center;pointer-events:none}
+#dice{background:rgba(10,26,85,.35);pointer-events:auto}
+.waitp{font-size:14px;font-weight:500;margin:8px 0 0}
+#dice .stopbtn{margin-top:10px}
+.dbox{padding:16px 28px 18px;text-align:center}
+.dbox .who{font-size:18px;margin-bottom:12px}
+.drow{display:flex;gap:12px;justify-content:center}
+.die{width:84px;height:84px;border-radius:16px;background:#fff;color:#c81e1e;display:grid;place-items:center;font-size:52px;font-weight:900;text-shadow:none;box-shadow:inset 0 -6px 0 #d7dbe6,0 4px 0 #0a1a55}
+.die.roll{transform:rotate(12deg) scale(.95)}
+.die.fix{animation:fix .35s ease-out}
+@keyframes fix{0%{transform:scale(1.35)}100%{transform:none}}
+.dbox .sum{margin-top:12px;font-size:20px}
+.dbox .sum b{color:var(--gold);font-size:30px}
+#stepWin{left:50%;top:84px;transform:translateX(-50%);padding:4px 18px;font-size:16px;border-left:10px solid var(--pc)}
+#stepWin b{font-size:34px;color:var(--gold);margin:0 4px}
+.arr-in{display:grid;justify-items:center;gap:12px;animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+.arr-big{font-size:clamp(40px,10vw,84px);font-weight:900;color:var(--gold);-webkit-text-stroke:3px #c81e1e;paint-order:stroke fill;text-shadow:0 6px 0 #7a1010,0 0 30px rgba(255,225,77,.6);letter-spacing:.05em}
+.arr-sub{padding:8px 18px;font-size:18px}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+.evbox{display:flex;gap:16px;align-items:center;padding:16px 22px;max-width:min(520px,92vw);animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
+.evbox p{margin:6px 0 0;font-size:16px;line-height:1.5}
+.evtitle{font-size:22px;font-weight:900;color:var(--gold)}
+.evtk{flex:0 0 72px;height:120px;filter:drop-shadow(0 4px 0 rgba(0,0,0,.35))}
+.evtk svg,.tkm svg{width:100%;height:100%;display:block}
+.evicon{font-size:64px}
+.evbox.ginji{background:linear-gradient(#3a3a3a,#111)}
+.evbox.bonbi{background:linear-gradient(#6b4a8c,#2a1640)}
+.bubble{display:inline-block;margin-top:6px;background:#fff;color:#1b2333;text-shadow:none;border-radius:14px;padding:6px 12px;font-size:17px;position:relative}
+.bubble::before{content:"";position:absolute;left:-10px;top:12px;border:7px solid transparent;border-right:10px solid #fff;border-left:0}
+.tkm{display:inline-block;vertical-align:-3px;margin-left:4px}
+.eff{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.eff span{font-size:10px;font-weight:500;background:rgba(0,0,0,.3);border-radius:4px;padding:0 4px}
+.cmd em{font-style:normal;font-size:12px;font-weight:500}
+.cmd.badcard{color:#ffb3ad}
+.senote.gamble{background:#8e2bd6}
+#roulWin.k-gamble h2{color:#e3b8ff}
+#roulWin.k-gamble .reel #rCur{background:linear-gradient(#f3e3ff,#c99af0)}
+#roulWin.k-gamble.hit .reel #rCur{background:#8e2bd6}
+.srow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.srow > span:last-child{white-space:nowrap}
+#map .mk.sm{font-size:15px}
+.sqm.t-gamble{background:#8e2bd6}.sqm.t-shop{background:#12a05c}
+.chartbox{background:rgba(0,0,0,.2);border-radius:12px;padding:8px;margin:0 0 12px}
+.ctitle{font-size:14px;margin:0 4px 6px}
+.chart{width:100%;height:auto;display:block}
+.chart .ax{font-family:var(--font);font-size:12px;font-weight:800;fill:#5b6577;text-shadow:none}
+.legend2{display:flex;flex-wrap:wrap;gap:4px 12px;margin:6px 4px 0;font-size:13px}
+.legend2 i{display:inline-block;width:16px;height:5px;border-radius:3px;margin-right:4px;vertical-align:middle;border:1px solid #fff}
+.tbl td.yen,.tbl td.up,.tbl td.dn{white-space:nowrap}
+.tbl td.up{color:#a8f0b0}.tbl td.dn{color:#ffb3ad}
+.tabs{display:flex;gap:6px;margin:8px 6px 2px}
+.tab{flex:1;border:2px solid #fff;background:rgba(0,0,0,.25);border-radius:999px;padding:5px 0;font-size:15px}
+.tab.on{background:var(--gold);color:#0a1a55;text-shadow:none}
+.srow .neg{color:#ffb3ad;white-space:nowrap}
+.gt{display:inline-block;font-size:11px;font-weight:800;background:var(--gc);border:1.5px solid #fff;border-radius:6px;padding:0 4px;margin-right:5px;vertical-align:1px;text-shadow:0 1px 0 rgba(0,0,0,.4);white-space:nowrap}
+.gm{display:inline-block;font-size:10px;border-radius:5px;padding:0 4px;margin-left:4px;white-space:nowrap}
+.gm.up{background:#1d8a3a}.gm.dn{background:#b3261e}
+.evbox.news{background:linear-gradient(#f4ecd8,#e2d3ad);color:#2a2a2a;text-shadow:none;border-color:#fff}
+.evbox.news .evtitle{color:#b3261e;font-family:serif;letter-spacing:.1em}
+.evbox.news .ng{font-size:14px;color:#5b4a2a}
+.newslist{list-style:none;padding:0;margin:0;display:grid;gap:5px;font-size:13px;font-weight:500}
+.newslist li{background:rgba(0,0,0,.22);border-radius:8px;padding:5px 8px;border-left:5px solid #8a92a6}
+.newslist li.up{border-left-color:#5fd37a}.newslist li.dn{border-left-color:#ff8a80}
+.newslist .nm{font-weight:900;margin-right:6px;color:var(--gold)}
+.gmuls{list-style:none;padding:0;margin:8px 0;display:flex;flex-wrap:wrap;gap:6px}
+.gmuls li{background:rgba(0,0,0,.22);border-radius:8px;padding:4px 8px}
+.gmuls b.up{color:#a8f0b0}.gmuls b.dn{color:#ffb3ad}
+.btn.resume{background:#12a05c;border-color:#0b5e36;box-shadow:0 3px 0 #0b5e36;display:grid;gap:2px}
+.btn.resume small{font-size:12px;font-weight:500;opacity:.95}
+.lobbycard h2{display:flex;justify-content:space-between;align-items:center}
+#chats{position:fixed;z-index:35;left:50%;transform:translateX(-50%);top:calc(120px + env(safe-area-inset-top,0px));display:grid;gap:6px;justify-items:center;pointer-events:none;width:min(520px,92vw)}
+.chatmsg{background:#fff;color:#1b2333;text-shadow:none;border-radius:16px;padding:6px 14px;font-size:16px;border:3px solid var(--pc);box-shadow:0 4px 10px rgba(0,0,0,.3);animation:tin .25s ease-out}
+.chatmsg b{color:var(--pc);margin-right:8px;font-size:13px}
+.chatmsg.out{opacity:0;transition:opacity .4s}
+#chatPal{position:fixed;z-index:36;left:50%;bottom:calc(110px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(560px,94vw);max-height:55vh;overflow:auto;padding:10px}
+.cph{font-size:15px;padding:0 6px 6px}
+.cpg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.chatb{background:#fff;color:#1b2333;text-shadow:none;border:0;border-radius:12px;padding:8px 10px;font-size:14px;text-align:left;box-shadow:0 3px 0 #0a1a55}
+.chatb:hover,.chatb:focus-visible{background:var(--gold)}
+#map .cbt{font-family:var(--font);font-size:16px;font-weight:900;fill:#1b2333}
+#map .cbub{pointer-events:none}
+.ti{width:44px;height:33px;vertical-align:middle;overflow:visible}
+.ti.pwt{width:30px;height:22px;margin:-4px 4px 0 -2px}
+.ti.lt{width:46px;height:34px;margin-right:6px;flex:0 0 auto}
+.ti.big{width:180px;height:135px}
+#lobbyList .ln{display:grid;line-height:1.2}
+#lobbyList .ln small{font-size:11px;font-weight:500;opacity:.85}
+#lobbyList .tbtn{margin-left:auto;padding:3px 8px;font-size:12px}
+#lobbyList .tbtn+.x{margin-left:4px}
+.tprev{display:grid;place-items:center;background:linear-gradient(#a9db78,#93c962);border-radius:12px;padding:6px;margin-bottom:6px;border:2px solid #fff}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
+.tchoice{display:grid;justify-items:center;gap:2px;background:rgba(0,0,0,.22);border:2px solid transparent;border-radius:10px;padding:6px 2px;font-size:12px}
+.tchoice.on{border-color:var(--gold);background:rgba(255,225,77,.18)}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.sw{width:34px;height:34px;border-radius:50%;background:var(--c);border:3px solid #fff;box-shadow:0 2px 0 #0a1a55}
+.sw.on{outline:3px solid var(--gold);outline-offset:2px}
+.sw[disabled]{opacity:.25;cursor:not-allowed}
+.betlist{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.ban-in{padding:12px 34px;font-size:clamp(22px,6vw,34px);border-left:14px solid var(--pc);animation:slide .35s ease-out}
+.ban-in .pc{display:none}
+@keyframes slide{from{transform:translateX(-60vw)}}
+#roul{pointer-events:auto;background:rgba(10,26,85,.45)}
+#roulWin{width:min(420px,92vw);padding:14px 16px 18px;text-align:center}
+#roulWin h2{margin:0 0 4px;font-size:26px;font-weight:900;color:var(--gold);letter-spacing:.08em}
+#rWho{font-size:15px;margin-bottom:12px}
+.reel{background:#fff;border-radius:12px;border:4px solid #0a1a55;color:#1b2333;text-shadow:none;overflow:hidden;position:relative}
+.reel div{height:44px;display:grid;place-items:center;font-size:20px;color:#8a92a6}
+.reel #rCur{height:64px;font-size:34px;font-weight:900;color:#1b2333;background:linear-gradient(#fff6c4,#ffe14d);border-top:3px solid var(--red);border-bottom:3px solid var(--red)}
+#roulWin.hit #rCur{animation:hit .25s 4 alternate;background:var(--red);color:#fff}
+@keyframes hit{to{filter:brightness(1.4)}}
+#rInfo{min-height:3em;margin-top:10px;font-size:17px;line-height:1.5}
+#rInfo b{font-size:24px;color:var(--gold)}
+#rInfo b.neg{color:#ffb3ad}
+#roulWin.k-blue h2{color:#a8d4ff}
+#roulWin.k-red h2{color:#ffb3ad}
+#roulWin.k-blue .reel #rCur{background:linear-gradient(#e2edff,#9cc0ff);border-color:#2563eb}
+#roulWin.k-red .reel #rCur{background:linear-gradient(#ffe4e2,#ff9f99)}
+#roulWin.k-card .reel #rCur{font-size:28px}
+#roulWin.hit .reel #rCur{color:#fff}
+#roulWin.k-blue.hit .reel #rCur{background:#2563eb}
+#roulWin.k-red.hit .reel #rCur{background:var(--red)}
+#rStop,.stopbtn{margin-top:6px;font-size:26px;padding:12px 40px;border-radius:999px;border:4px solid #fff;background:var(--red);color:#fff;box-shadow:0 0 0 3px #7a1010,0 5px 0 #7a1010;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+#rStop:active,.stopbtn:active{transform:translateY(3px);box-shadow:0 0 0 3px #7a1010,0 2px 0 #7a1010}
+#rWait{font-size:14px;font-weight:500;margin:6px 0 0}
+
+#modal{position:fixed;inset:0;background:rgba(10,26,85,.45);z-index:40;display:grid;place-items:center;padding:16px}
+.mbox{width:min(560px,100%);max-height:86vh;overflow:auto;padding:16px 16px 18px;position:relative}
+.mbox h3{margin:0 0 10px;font-size:22px;font-weight:900}
+.mbox h3.settle{color:var(--gold);font-size:28px;text-align:center}
+.mbox h4{margin:14px 0 6px}
+#modalClose{position:absolute;right:8px;top:6px;border:0;background:none;font-size:26px;width:40px;height:40px}
+.lines{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.lines span{font-size:12px;border-left:8px solid var(--lc);padding:1px 8px;background:rgba(0,0,0,.25);border-radius:0 6px 6px 0}
+.destnote{color:var(--gold)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{text-align:left;padding:7px 4px;border-bottom:1px dashed rgba(255,255,255,.35)}
+.tbl th{font-size:12px;font-weight:500;opacity:.85}
+.rank{list-style:none;padding:0;margin:0 0 14px;display:grid;gap:8px}
+.rank li{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:baseline;border-left:10px solid var(--pc);padding:8px 12px;background:rgba(0,0,0,.22);border-radius:0 10px 10px 0}
+.rank .no{font-size:22px;color:var(--gold)}
+.rank small{grid-column:2/-1;font-weight:500}
+.rank li:first-child b{font-size:22px}
+.loglist,.cardlist{list-style:none;padding:0;margin:0;display:grid;gap:4px;font-size:14px;font-weight:500}
+.loglist li{border-left:4px solid rgba(255,255,255,.4);padding:3px 8px}
+.cardlist li{display:grid;background:rgba(0,0,0,.22);border-radius:8px;padding:6px 10px}
+
+@media (max-width:820px){
+  #dateWin{left:6px;top:6px;padding:4px 10px 6px;min-width:76px}
+  #dMonth{font-size:24px}
+  #destWin{right:6px;top:6px;left:96px;min-width:0;padding:4px 10px 6px}
+  #destName{font-size:22px}
+  #dLeft{display:none}
+  #dSeason{font-size:11px;padding:0 6px}
+  #players{left:6px;right:6px;top:84px;width:auto;display:flex;overflow-x:auto;gap:8px;padding:4px 4px 6px}
+  .pw{flex:0 0 auto;min-width:118px;padding:3px 8px 4px}
+  .pn{font-size:12px}.pm{font-size:15px}.pa{display:none}
+  #msgWin{left:6px;right:6px;bottom:6px;min-height:70px;font-size:15px;padding:8px 12px 10px}
+  #cmdWin{right:6px;bottom:86px;width:min(62vw,280px);max-height:calc(100% - 250px)}
+  .cmd{font-size:15px;padding:6px 8px 6px 26px}
+  .cmd::before{top:10px;left:7px}
+  .cmd.main{font-size:19px}
+  .optlist{max-height:32vh}
+  #zoomWin{left:6px;right:auto;bottom:86px;flex-direction:column}
+  #stepWin{top:140px}
+  .bcols,.brow{grid-template-columns:1fr 92px 58px}
+  .bt{font-size:17px}
+  .tbl{font-size:12px}
+  .tbl td,.tbl th{padding:6px 2px}
+  .brow{font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+</style>
+</head>
+<body>
+
+<section id="title" class="screen">
+  <div class="sign">
+    <div class="sign-top">
+      <div class="kana">かわてつすごろく</div>
+      <h1>川鉄すごろく</h1>
+      <div class="roma">Kawatetsu Sugoroku</div>
+    </div>
+    <div class="sign-bar"><span>◀ 川島<small>Kawashima</small></span><span><small>Daigane-mochi</small>大金持ち ▶</span></div>
+    <div class="sign-body">
+      <p class="lead">川島県の路線をサイコロで走り、目的地に一番乗りして物件を買い集めよう。決算で一番お金持ちの社長が優勝。</p>
+      <label class="field">社長名<input id="nm" maxlength="8" placeholder="例：かわしま" autocomplete="nickname"></label>
+      <button class="btn primary resume" id="bResume" hidden></button>
+      <button class="btn primary" id="bLocal">この端末だけで遊ぶ</button>
+      <button class="btn" id="bHost">部屋を作る（オンライン対戦）</button>
+      <div class="join"><input id="code" maxlength="5" placeholder="部屋コード" aria-label="部屋コード"><button class="btn" id="bJoin">部屋に入る</button></div>
+      <p id="status" role="status"></p>
+      <details>
+        <summary>遊び方</summary>
+        <ul>
+          <li>最初に目的地ルーレットを止めて、目的地を決めます。</li>
+          <li>自分の番にサイコロを振り、光った駅から止まる駅を選びます。</li>
+          <li>🚩目的地に一番乗りするとボーナス。次の目的地もルーレットで決めます。いちばん遠い社長には貧乏神😈が取り憑きます。</li>
+          <li>夏（6〜8月）は青マスの金額が2倍・赤マスが半分、冬（12〜2月）は青マスが半分・赤マスが2倍になります。</li>
+          <li>最初の目的地に誰かが着くと、貧乏神トクメイが現れて目的地から一番遠い社長に取り憑きます。休みのターンでもトクメイは悪さをします。</li>
+          <li>紫の「¥」の駅はギャンブル駅。10万〜1億円を賭けて、当たれば2倍、ハズレたら0です。</li>
+          <li>ときどきスリの銀二が現れて、所持金の全額・半額・4分の1を盗んでいきます。</li>
+          <li>物件は🎡観光・🏬商業・🐟水産・🌾農林・🏭工業の5ジャンル。ときどき川島ニュースが起こって、ジャンルごとの収益が上がったり下がったりします。</li>
+          <li>🌾農林物件は、借金になっても売られずに守られます。</li>
+          <li>緑の「店」の駅はカード売り場。駅ごとに違うカードを売っています。手持ちのカードは半額で売れ、デビルカードは引き取り料を払えば処分できます。</li>
+          <li>ロビーの「列車をえらぶ」で、自分の列車の形式（通勤形・特急形・気動車・電気機関車・新幹線・路面電車・蒸気機関車）と色を選べます。</li>
+          <li>オンライン対戦では💬ボタンから定型文チャットを送れます。</li>
+          <li>ゲームは自動でセーブされます。タイトルの「続きから遊ぶ」で再開できます（オンラインは部屋を作り直し、他の人は入り直します）。</li>
+          <li>サイコロは自分で「ストップ！」を押して止めます。</li>
+          <li>青い駅でお金がもらえ、赤い駅で払い、黄色い駅でカードがもらえます。金額やカードはルーレットを止めて決まります。</li>
+          <li>屋根のある駅は物件駅。物件を買うと毎年3月の決算で収益が入ります。全部買うと独占で2倍。</li>
+          <li>貧乏神を持ったまま他の社長を追い越すと、なすりつけられます。</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="lobby" class="screen" hidden>
+  <div class="win lobbycard">
+    <h2>出発準備中 <button class="btn sm" id="lChat" hidden>💬 チャット</button></h2>
+    <div id="roomInfo"></div>
+    <ol id="lobbyList"></ol>
+    <div id="lobbyCtl">
+      <div id="addHumanRow"><input id="humanName" maxlength="8" placeholder="一緒に遊ぶ人の名前" aria-label="一緒に遊ぶ人の名前"><button class="btn" id="bAddHuman">人を追加</button></div>
+      <div class="row">
+        <button class="btn" id="bAddCpu">CPUを追加</button>
+        <label for="yearsSel">プレイ年数</label>
+        <select id="yearsSel"><option value="1">1年</option><option value="2">2年</option><option value="3">3年</option><option value="5">5年</option><option value="10">10年</option></select>
+      </div>
+      <button class="btn primary" id="bStart">出発進行！</button>
+    </div>
+    <p id="lobbyWait" class="note" hidden></p>
+  </div>
+</section>
+
+<div id="game" hidden>
+  <svg id="map" xmlns="http://www.w3.org/2000/svg" aria-label="川島県の路線マップ"></svg>
+  <div id="dateWin" class="win hud"><span id="dYear"></span><span id="dMonth"></span><span id="dSeason"></span><span id="dLeft"></span></div>
+  <div id="destWin" class="win hud"><span class="tag">目的地</span><span id="destName"></span><span id="destLeft"></span><div id="roomTag"></div></div>
+  <ul id="players" class="hud"></ul>
+  <div id="stepWin" class="win hud" hidden>のこり<b id="stepN"></b>駅</div>
+  <div id="zoomWin" class="win hud"><button id="zIn" aria-label="拡大">＋</button><button id="zOut" aria-label="縮小">－</button><button id="zMe" aria-label="自分の列車へ">🚃</button><button id="zSnd" aria-label="効果音のオン・オフ">🔊</button><button id="zChat" aria-label="チャット" hidden>💬</button></div>
+  <div id="msgWin" class="win hud" aria-live="polite"><span id="msgText"></span></div>
+  <div id="cmdWin" class="win hud"></div>
+  <div id="buyWin" class="win" hidden></div>
+</div>
+
+<div id="roul" hidden>
+  <div id="roulWin" class="win">
+    <h2 id="roulTitle">目的地ルーレット</h2>
+    <div id="rWho"></div>
+    <div class="reel"><div id="rPrev"></div><div id="rCur"></div><div id="rNext"></div></div>
+    <div id="rInfo"></div>
+    <button id="rStop">ストップ！</button>
+    <p id="rWait">ルーレットが止まるのを待っています…</p>
+  </div>
+</div>
+<div id="chats" aria-live="polite"></div>
+<div id="chatPal" class="win" hidden></div>
+<div id="dice" hidden></div>
+<div id="arrive" hidden></div>
+<div id="evflash" hidden></div>
+<div id="banner" hidden></div>
+<div id="modal" hidden role="dialog" aria-modal="true"><div class="win mbox"><button id="modalClose" aria-label="閉じる">×</button><div id="modalBody"></div></div></div>
+
+<script>
+/* ===== 川鉄すごろく：ゲームロジック（DOMに依存しない部分） ===== */
+const STATIONS = [
+['緩が浜',533,150,'port1'],['鈴宮',533,195],['福川工業団地',533,237,'big'],['水把',533,278],
+['宇美崎',170,328,'port1'],['東船戸',235,328],['望町',305,328],['腰が原',533,328,'city2'],['啄木島',730,328,'gamble'],['仁が谷',820,328],['紅が咲',915,328,'city2'],['大戸',1020,328],['市原',1090,328],['唐林',1145,328,'rural1'],
+['浦田',1225,345],['紅垂',1280,300],['筒地上',1355,240],
+['式尻',455,362],['新大石',405,370],['禾久保',350,388],['明城',295,415,'rural1'],
+['清水夕霧',360,482,'rural1'],['屋敷原',425,445],['平上',480,445,'shop'],['仁山',650,445],['南夕霧',770,445],['今城学園前',905,445,'city2'],
+['雛社',480,495],['日築城',480,555,'big'],['東空和',480,605],['西里新町',480,655],['保立坂',480,712],['阿見坂',480,762,'rural1'],['川島中央',520,975],['千京門',505,1075],['川島',450,1195,'big'],
+['城河原海岸',915,205],['北大神本町',1120,148,'city2'],['角巻橋',915,482],['航空公園',915,515],['大神湖',905,555,'big'],
+['西波止',1325,148,'port1'],['大波止',1440,148],['雅浜',1510,148],['佐奈海岸',1645,148,'port1'],['山越',1780,148],['羽山西',1910,148],['上ヶ丘',2015,148,'big'],['北宮野',2085,180],['下港',2140,285,'big'],
+['西下港',2085,285],['東雲中町',2010,285],['下港美術大学入口',1925,285],['結松',1820,285],['星影中郷',1735,285],['星影',1660,285,'big'],['間沼',1590,285],['桜大町',1540,300],['伊和原',1515,345],['鶴沢',1515,395],['武見',1515,440],['稲が原',1515,490],['元宿',1515,550],
+['井川崎',1035,607],['井川湯元',1145,607,'onsen2'],['千波湖北',1280,607,'gamble'],['白雲下町',1370,607],['雲山温泉',1460,607,'onsen2'],['忍技村',1545,607],['飯洲',1818,688,'city2'],
+['三原元町',2230,420],['東ノ町',2265,640,'rural1'],['東川',2165,680],
+['下港公園',2140,350],['波引谷',2140,415],['すみれ台',2140,485],['九軒茶屋',1960,527],['豊泉温泉',1855,527,'onsen1'],['徳富',1810,582,'shop'],
+['南七日市',1810,805],['藤澤',1810,870],['豊麦',1810,935],['三秦',1810,1005],['矢幡',1810,1080],['内浦',1760,1195,'port1'],
+['緑福町',1885,712],['美奈丘ニュータウン',2005,700],['東島',2100,735,'big'],
+['東島栄町',2095,860],['芝向',2095,955],['本広岡',2095,1050],['桜地',2095,1160,'city2'],
+['隈川',1935,850],['松任',1940,1005],['九蘭野',1940,1105],
+['七日市',1735,712,'city2'],['川幡町',1665,780],['今芳川',1625,858],['羽竜',1430,955,'rural1'],['白能谷温泉',1450,795,'onsen1'],['能見市',1455,880],
+['永久佐',1265,955],['八沢田',1150,955,'shop'],['芦野',890,955],['浅賀',740,955],['川大前',600,950],['川島望通',350,955,'city2'],
+['千波湖',1145,665,'lake1'],['和賀岸',1145,770],['千波岩原',1145,825],['原石町',1100,885],
+['広江',1150,1080],['糸里',1150,1215,'city1'],['糸里港',1150,1355,'port2'],
+['常田',905,640],['梶ヶ丘',905,705],['尾賀公園',800,742],['金が山',740,810,'city1'],['神谷町',740,875],['北倉竹',740,1060,'city2'],['倉竹',790,1230,'city2'],
+['奥重',665,1210],['新遠石',875,1210],['遠石海岸',965,1210],['利賀浦',1055,1210],['津和',1220,1210],['しきめ',1280,1210],['海王',1400,1205,'port2'],['海王大学',1550,1210],['須賀浦',1640,1215,'city2'],['KR想掛',1840,1210],['美山',1915,1210,'gamble'],['南桜地',2020,1210,'shop'],['新野',2180,1350,'rural1'],
+['北海王',1400,1080],['篝火島',845,1095,'city1'],['新須賀浦',1590,1120],
+['八重川',1605,1340],['有電会沢',1605,1410],['十全',1605,1500],['有田',2035,1485,'rural1'],['清光海岸',2020,1340,'port1'],
+['川島ふ頭',470,1320,'port2'],['水郷山',310,1365],['鳶島新都心',160,1370,'big'],
+['安見',790,1300],['鴨野華瀬',750,1400],['宮町',800,1460],['魚瀧',800,1515,'port1'],
+['辻部',210,925],['佐雅野',100,965,'rural1'],['火宮参道',100,1030],['鷹島',150,1110],
+['日次山石',265,840],['日次川岸',205,800],['中浦',150,770,'rural1'],['波良',95,700],['日次浜',95,595,'port1'],['北中浦',148,735],['北浪良',148,685],
+['雪峰湖',230,750,'lake1'],['喜光地',285,690,'city1'],['五文村',345,690],['山石',365,790],['松屋町',400,1010],
+];
+
+const LINES = [
+['海山線','#1a73e8',['宇美崎','東船戸','望町','腰が原','啄木島','仁が谷','紅が咲','大戸','市原','唐林']],
+['臨海線','#f39800',['緩が浜','鈴宮','福川工業団地','水把','腰が原']],
+['日原線','#ef8a17',['腰が原','式尻','新大石','禾久保','明城']],
+['夕霧本線','#e0a030',['清水夕霧','屋敷原','平上','仁山','南夕霧','今城学園前']],
+['島浜線','#2b8be6',['腰が原','平上','雛社','日築城','東空和','西里新町','保立坂','阿見坂','川島中央','千京門','川島']],
+['今城線','#79bd47',['北大神本町','城河原海岸','紅が咲','今城学園前','角巻橋','航空公園','大神湖']],
+['井川高速線','#8fcf5a',['大神湖','井川崎','井川湯元','千波湖北','白雲下町','雲山温泉','忍技村','飯洲']],
+['北波線','#2bb3c0',['北大神本町','西波止','大波止','雅浜','佐奈海岸','山越','羽山西','上ヶ丘','北宮野','下港']],
+['下林線','#35c0b0',['唐林','浦田','紅垂','筒地上','大波止']],
+['星影線','#d4b43c',['下港','西下港','東雲中町','下港美術大学入口','結松','星影中郷','星影','間沼','桜大町','伊和原','鶴沢','武見','稲が原','元宿','忍技村']],
+['美奈丘本線','#a855c8',['下港','三原元町','東ノ町','東川','飯洲']],
+['七日市線','#1a73e8',['下港','下港公園','波引谷','すみれ台','九軒茶屋','豊泉温泉','徳富','飯洲','南七日市','藤澤','豊麦','三秦','矢幡','内浦']],
+['東島緩行線','#8b8f3c',['飯洲','緑福町','美奈丘ニュータウン','東島']],
+['東島線','#45c1d6',['東島','東島栄町','芝向','本広岡','桜地']],
+['山麓線','#7a2350',['白能谷温泉','能見市','羽竜']],
+['川島線','#7a2350',['飯洲','七日市','川幡町','今芳川','羽竜','永久佐','八沢田','芦野','浅賀','川大前','川島望通']],
+['九蘭線','#8a2a5c',['緑福町','隈川','松任','九蘭野','桜地']],
+['千波線','#4caf50',['井川湯元','千波湖','和賀岸','千波岩原','原石町','八沢田']],
+['糸里線','#6d1f45',['八沢田','広江','糸里','糸里港']],
+['大神湖線','#1e3a8a',['大神湖','常田','梶ヶ丘','尾賀公園','金が山','神谷町','浅賀','北倉竹','倉竹']],
+['島浜緩行線','#1a73e8',['川島','奥重','倉竹','新遠石','遠石海岸','利賀浦','糸里','津和','しきめ','海王','海王大学','須賀浦','内浦','KR想掛','美山','南桜地','新野']],
+['海竜線','#f06b7a',['羽竜','北海王','海王']],
+['高速線','#3d7f8f',['北倉竹','篝火島','広江','北海王','新須賀浦','須賀浦']],
+['有田線','#5ec8e0',['須賀浦','八重川','有電会沢','十全','有田','清光海岸','南桜地']],
+['臨港線','#3a5ba8',['川島','川島ふ頭','水郷山','鳶島新都心']],
+['羽渚本線','#2a9fb5',['倉竹','安見','鴨野華瀬','宮町','魚瀧']],
+['佐川本線','#2a4fa0',['川島望通','辻部','佐雅野','火宮参道','鷹島']],
+['日次線','#4fae7d',['川島望通','日次山石','日次川岸','中浦','波良','日次浜']],
+['北浪良線','#e03a4a',['中浦','北中浦','北浪良']],
+['中央線','#f5a623',['中浦','雪峰湖','喜光地','五文村','山石','松屋町','川島']],
+];
+
+const TEMPL = {
+  city1:[['駅そば',100,10],['定食屋',300,8],['商店街',1200,6],['ビジネスホテル',4000,4]],
+  city2:[['駅弁屋',200,10],['ラーメン屋',600,8],['商店街',2400,6],['ホテル',8000,4],['駅ビル',16000,3]],
+  port1:[['海鮮丼屋',120,10],['干物屋',300,12],['漁港',2000,6]],
+  port2:[['海鮮丼屋',200,10],['かまぼこ工場',800,10],['漁港',4000,6],['水族館',12000,4]],
+  onsen1:[['温泉まんじゅう',150,15],['足湯カフェ',400,10],['旅館',3000,6]],
+  onsen2:[['温泉まんじゅう',200,15],['足湯カフェ',600,10],['旅館',5000,6],['高級旅館',15000,4]],
+  lake1:[['貸しボート',100,12],['湖畔カフェ',500,8],['キャンプ場',2000,6]],
+  rural1:[['野菜直売所',80,20],['果樹園',400,12],['牧場',1500,8],['道の駅',4000,5]],
+};
+const SPECIAL = {
+  '川島':[['川島駅弁',300,12],['ラーメン横丁',1000,9],['川島地下街',6000,6],['川島中央ホテル',15000,4],['川島百貨店',30000,3],['川島タワー',60000,2]],
+  '下港':[['下港かまぼこ',200,12],['下港朝市',800,9],['下港漁港',4000,6],['下港造船所',18000,4],['下港フェリー',40000,3]],
+  '東島':[['東島たい焼き',150,12],['東島アーケード',2000,7],['ショッピングモール',10000,5],['東島スタジアム',30000,3]],
+  '鳶島新都心':[['新都心カフェ',500,8],['オフィスビル',8000,5],['タワーマンション',22000,4],['国際会議場',50000,2]],
+  '福川工業団地':[['部品工場',1000,8],['製鉄所',12000,5],['自動車工場',35000,4]],
+  '日築城':[['城下町だんご',100,15],['甲冑ミュージアム',1500,7],['日築城天守',6000,5]],
+  '星影':[['天文台カフェ',200,12],['星見ペンション',1200,8],['星影天文台',5000,5]],
+  '上ヶ丘':[['匿名博物館',3000,8]],
+  '大神湖':[['わかさぎ釣り',150,14],['湖畔カフェ',800,8],['大神湖遊覧船',4000,6],['湖畔リゾート',12000,4]],
+};
+
+/* ----- カード ----- */
+// choose: 使うときに選ぶもの（player=相手, city=都市, num=1〜6, card=手持ちカード）
+const CARDS = {
+  kyuko:    {name:'急行カード',desc:'サイコロを2個ふれる（1回で消える）',dice:2,w:20},
+  kyuko_s:  {name:'急行周遊カード',desc:'サイコロを2個ふれる（何回か使うと消える）',dice:2,shuyu:true,w:8},
+  tokkyu:   {name:'特急カード',desc:'サイコロを3個ふれる（1回で消える）',dice:3,w:12},
+  tokkyu_s: {name:'特急周遊カード',desc:'サイコロを3個ふれる（何回か使うと消える）',dice:3,shuyu:true,w:5},
+  special:  {name:'スペシャルカード',desc:'1〜6の好きな数だけ進める',choose:'num',w:6},
+  kamigaoka:{name:'上ヶ丘へ！カード',desc:'上ヶ丘駅へワープする（このターンは終わり）',w:6},
+  gyuho:    {name:'牛歩カード',desc:'相手を3ターンのあいだ1〜2マスしか進めなくする',choose:'player',w:6},
+  buttobi:  {name:'ぶっとびカード',desc:'ランダムな駅へ飛ぶ（このターンは終わり）',w:8},
+  toshi:    {name:'都市へ！カード',desc:'川島・下港・七日市・海王から選んで飛ぶ',choose:'city',w:5},
+  basho:    {name:'場所替えカード',desc:'相手と場所を入れかえる',choose:'player',w:4},
+  summit:   {name:'サミットカード',desc:'全員を自分の駅に集める',w:4},
+  jokou:    {name:'徐行運転カード',desc:'他の全員が3ターン急行系カードを使えなくなる',w:4},
+  heli:     {name:'ヘリ禁止カード',desc:'他の全員が3ターンぶっとびカードを使えなくなる',w:3},
+  fuuin:    {name:'ふういんカード',desc:'他の全員が3ターンカードを使えなくなる',w:3},
+  katana:   {name:'刀狩カード',desc:'相手のカードを1枚もらう（たまにもう1枚）',choose:'player',w:5},
+  shuyukin: {name:'周遊禁止カード',desc:'他の全員の周遊カードをふつうのカードにする',w:3},
+  tokusei:  {name:'徳政令カード',desc:'全員の借金をゼロにする',w:4},
+  tokkae:   {name:'とっかえっこカード',desc:'相手と所持金を交換する（借金中は使えない）',choose:'player',w:3},
+  bebi:     {name:'ベビキュラー',desc:'相手の所持金を半分吸い取る',choose:'player',w:3},
+  bouzu:    {name:'坊主丸儲けカード',desc:'他の全員の所持金を奪う（借金は対象外）',w:1},
+  dokkai:   {name:'どっかいけカード',desc:'貧乏神を選んだ社長へ行かせる',choose:'player',w:4},
+  toumin:   {name:'冬眠カード',desc:'他の全員を2ターン休ませる',w:2},
+  mokuteki: {name:'目的地変更カード',desc:'目的地ルーレットをもう一度回す',w:4},
+  rentai:   {name:'連帯保証人カード',desc:'自分が借金になったら相手に1000万円負担させる',choose:'player',w:3},
+  dubbing:  {name:'ダビングカード',desc:'手持ちのカードを1枚複製する',choose:'card',w:3},
+  devil:    {name:'デビルカード',desc:'持っていると毎ターン所持金を奪われる（使えない）',bad:true,w:2},
+};
+const MAX_CARDS = 8;
+const EFFECT_TURNS = 3;
+const CITIES = ['川島','下港','七日市','海王'];
+const BET_OPTIONS = [10,50,100,300,500,1000,3000,5000,10000];
+const BONBI_NAME = 'トクメイ';
+// カード売り場：駅ごとに品ぞろえが違う（価格は万円）
+const CARD_PRICE = {kyuko:50,kyuko_s:300,tokkyu:150,tokkyu_s:600,special:400,kamigaoka:100,gyuho:50,buttobi:100,toshi:300,basho:500,summit:500,jokou:300,heli:300,fuuin:800,katana:500,shuyukin:400,tokusei:1000,tokkae:2000,bebi:1500,bouzu:5000,dokkai:800,toumin:1500,mokuteki:600,rentai:800,dubbing:1000};
+// 売却は買値の半額。デビルカードは引き取り料を払って処分する
+const DEVIL_FEE = 500;
+function sellPrice(k){ return k==='devil'?-DEVIL_FEE:Math.round(CARD_PRICE[k]/2); }
+const SHOPS = {
+  '平上':  ['kyuko','tokkyu','special','kamigaoka','gyuho','buttobi'],
+  '八沢田':['kyuko_s','tokkyu','toshi','jokou','heli','dokkai','mokuteki'],
+  '徳富':  ['tokkyu_s','katana','basho','summit','fuuin','shuyukin','dubbing'],
+  '南桜地':['kyuko','tokusei','tokkae','bebi','bouzu','toumin','rentai'],
+};
+// テンプレートに追加する物件（工業が少ないので工業系を中心に）
+const EXTRA = {
+  '糸里港':[['糸里造船所',8000,5]],
+  '金が山':[['金が山鉱山',3000,7]],
+  '喜光地':[['喜光地発電所',10000,4]],
+  '北倉竹':[['倉竹精密工場',5000,5]],
+  '七日市':[['七日市化学工場',9000,4]],
+  '海王':[['海王製油所',12000,4]],
+  '須賀浦':[['須賀浦製紙工場',6000,5]],
+};
+// 物件ジャンル（名前から自動で決める）
+const GENRES = {
+  kanko:{name:'観光',icon:'🎡',color:'#e8579b'},
+  shogyo:{name:'商業',icon:'🏬',color:'#f0a020'},
+  suisan:{name:'水産',icon:'🐟',color:'#2a9fd6'},
+  norin:{name:'農林',icon:'🌾',color:'#3fae4a'},
+  kogyo:{name:'工業',icon:'🏭',color:'#7d8597'},
+};
+const GENRE_KEYS = Object.keys(GENRES);
+function genreOf(name){
+  if(/海鮮|干物|漁港|かまぼこ|朝市|わかさぎ/.test(name)) return 'suisan';
+  if(/工場|製鉄|造船|鉱山|発電所|製油所/.test(name)) return 'kogyo';
+  if(/野菜|果樹|牧場|道の駅/.test(name)) return 'norin';
+  if(/ビジネス/.test(name)) return 'shogyo';
+  if(/旅館|温泉|足湯|ボート|湖畔|キャンプ|遊覧|リゾート|水族館|天文台|ペンション|ミュージアム|天守|博物館|スタジアム|タワー|フェリー|ホテル|だんご/.test(name)) return 'kanko';
+  return 'shogyo';
+}
+// 川島ニュース（月の始めにときどき起こる）。mul はその年の決算までジャンルの収益にかかる倍率、bonus は持ち主への臨時収入（年間収益に対する割合）
+const EVENTS = [
+  {g:'norin', mul:2,   months:[9,10,11], text:'記録的な豊作！ 今年の農林物件の収益が2倍に'},
+  {g:'norin', mul:0.5, months:[6,7,8],   text:'冷夏で不作… 今年の農林物件の収益が半分に'},
+  {g:'norin', bonus:0.5, months:[10,11], text:'川島県産フルーツが大人気！ 農林物件の持ち主に臨時収入'},
+  {g:'suisan',mul:2,   text:'大漁旗がはためく！ 今年の水産物件の収益が2倍に'},
+  {g:'suisan',mul:0.5, text:'海水温の上昇で不漁… 今年の水産物件の収益が半分に'},
+  {g:'suisan',bonus:0.5, months:[12,1,2], text:'冬の味覚フェアで海鮮が飛ぶように売れた！ 水産物件の持ち主に臨時収入'},
+  {g:'kanko', mul:2,   months:[6,7,8],   text:'夏休みの観光ブーム！ 今年の観光物件の収益が2倍に'},
+  {g:'kanko', mul:0.5, months:[8,9,10],  text:'台風直撃で観光客が激減… 今年の観光物件の収益が半分に'},
+  {g:'kanko', bonus:0.5, months:[3,4,5], text:'川島さくらまつりに人があふれた！ 観光物件の持ち主に臨時収入'},
+  {g:'shogyo',mul:1.5, text:'川島県は好景気！ 今年の商業物件の収益が1.5倍に'},
+  {g:'shogyo',mul:0.5, text:'不景気で財布のひもが固い… 今年の商業物件の収益が半分に'},
+  {g:'shogyo',bonus:0.5, months:[12],   text:'年末商戦が大にぎわい！ 商業物件の持ち主に臨時収入'},
+  {g:'kogyo', mul:2,   text:'川島県の工業製品の輸出が好調！ 今年の工業物件の収益が2倍に'},
+  {g:'kogyo', mul:0.5, text:'部品不足で工場の生産がストップ… 今年の工業物件の収益が半分に'},
+];
+const EVENT_RATE = 0.35;
+const MAX_PLAYERS = 8;
+const PLAYER_COLORS = ['#e53935','#1e6fe0','#2e9e48','#f08c00','#8e3cc8','#00897b','#d81b8c','#795548'];
+// 列車の見た目（形式・車体色・帯色）
+const TRAIN_TYPES = {
+  tsukin:{name:'通勤形'}, tokkyu:{name:'特急形'}, kidosha:{name:'気動車'}, kikan:{name:'電気機関車'},
+  shinkansen:{name:'新幹線'}, romen:{name:'路面電車'}, sl:{name:'蒸気機関車'},
+};
+const BODY_COLORS = ['#e53935','#1e6fe0','#2e9e48','#f08c00','#8e3cc8','#00897b','#d81b8c','#795548','#546e7a','#f2c200'];
+const BAND_COLORS = ['#ffffff','#ffe14d','#1b2333','#ff7a00','#00b0f0','#e5322d','#3fae4a'];
+
+/* ----- グラフ構築 ----- */
+const ST = {}, ADJ = {}, NAMES = [], LINES_OF = {};
+STATIONS.forEach(([n,x,y,k])=>{ ST[n]={n,x,y,k:k||null}; ADJ[n]=new Set(); NAMES.push(n); LINES_OF[n]=[]; });
+LINES.forEach(([ln,c,arr])=>{
+  arr.forEach(n=>{ if(!ST[n]) throw new Error('unknown station '+n); if(!LINES_OF[n].includes(ln)) LINES_OF[n].push(ln); });
+  for(let i=0;i<arr.length-1;i++){ ADJ[arr[i]].add(arr[i+1]); ADJ[arr[i+1]].add(arr[i]); }
+});
+for(const n in ADJ) ADJ[n]=[...ADJ[n]];
+function strHash(str){ let h=2166136261; for(const ch of str){ h^=ch.codePointAt(0); h=Math.imul(h,16777619); } return h>>>0; }
+NAMES.forEach(n=>{
+  const s=ST[n];
+  if(s.k==='gamble'||s.k==='shop'){
+    s.type=s.k;
+  } else if(s.k){
+    s.type='prop';
+    const sp=SPECIAL[n];
+    s.props=(sp||TEMPL[s.k]).concat(EXTRA[n]||[]).map(([nm,p,r])=>{ const name=sp?nm:n+nm; return {name,price:p,rate:r,genre:genreOf(name)}; });
+  } else {
+    const h=strHash(n)%100;
+    s.type = h<46 ? 'blue' : h<80 ? 'red' : 'card';
+  }
+});
+const PROP_STATIONS = NAMES.filter(n=>ST[n].type==='prop');
+const DIST = {};
+NAMES.forEach(src=>{
+  const d={[src]:0}, q=[src];
+  while(q.length){ const u=q.shift(); for(const v of ADJ[u]) if(d[v]===undefined){ d[v]=d[u]+1; q.push(v); } }
+  DIST[src]=d;
+});
+
+/* ----- ユーティリティ ----- */
+function rnd(a,b){ return a+Math.floor(Math.random()*(b-a+1)); }
+function yf(s){ return 1+(s.year-1)*0.25; }
+function r100(v){ return Math.max(100, Math.round(v/100)*100); }
+function yen(m){
+  const neg=m<0; m=Math.abs(Math.round(m));
+  const oku=Math.floor(m/10000), man=m%10000;
+  return (neg?'−':'')+(oku?oku+'億':'')+(man||!oku?man+'万':'')+'円';
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function addLog(s,text,kind){ s.log.push({seq:++s.seq,text,kind:kind||'info'}); if(s.log.length>120) s.log.splice(0,s.log.length-120); }
+function propValue(s,i){ let v=0; for(const k in s.owners) if(s.owners[k]===i){ const [st,idx]=k.split('#'); v+=ST[st].props[+idx].price; } return v; }
+function assets(s,i){ return s.players[i].money+propValue(s,i); }
+function isMono(s,st,i){ return ST[st].props.every((_,k)=>s.owners[st+'#'+k]===i); }
+function ownedKeys(s,i){ return Object.keys(s.owners).filter(k=>s.owners[k]===i); }
+function income(s,i){
+  let sum=0;
+  const sts=new Set(ownedKeys(s,i).map(k=>k.split('#')[0]));
+  sts.forEach(st=>{ const mono=isMono(s,st,i); ST[st].props.forEach((p,k)=>{ if(s.owners[st+'#'+k]===i) sum+=p.price*p.rate/100*(mono?2:1)*((s.gmul&&s.gmul[p.genre])||1); }); });
+  return Math.round(sum);
+}
+
+/* ----- 状態 ----- */
+function newLobby(){ return {phase:'lobby',players:[],years:3,seq:0,log:[],owners:{}}; }
+function addPlayer(s,name,owner,cpu){
+  const used=s.players.map(p=>p.color);
+  const color=PLAYER_COLORS.find(c=>!used.includes(c))||PLAYER_COLORS[0];
+  const types=Object.keys(TRAIN_TYPES);
+  s.players.push({id:'p'+(++s.seq),name:(name||'社長').slice(0,8),owner,cpu:!!cpu,away:false,color,money:0,pos:'川島',cards:[],train:{type:types[s.players.length%types.length],band:'#ffffff'}});
+}
+// ロビーで列車の見た目を変える（車体色は他の社長と重ならないように）
+function setTrain(s,pid,t){
+  const p=s.players[pid]; if(!p||s.phase!=='lobby'||!t) return false;
+  p.train=p.train||{type:'tsukin',band:'#ffffff'};
+  if(t.type&&TRAIN_TYPES[t.type]) p.train.type=t.type;
+  if(t.band&&BAND_COLORS.includes(t.band)) p.train.band=t.band;
+  if(t.color&&BODY_COLORS.includes(t.color)&&!s.players.some((q,j)=>j!==pid&&q.color===t.color)) p.color=t.color;
+  return true;
+}
+function resetPlayer(p){ Object.assign(p,{money:1000,pos:'川島',cards:[],rest:0,gyuho:0,jokou:0,heli:0,fuuin:0,guarantor:null}); }
+function initGame(s){
+  shuffle(s.players);
+  s.players.forEach(resetPlayer);
+  Object.assign(s,{year:1,month:4,cur:0,owners:{},bonbi:null,phase:'turn',opts:null,roll:null,move:null,lastSettle:null,result:null,turnCards:0,choose:null,bet:null});
+  s.history=[{label:'開始',v:s.players.map((_,i)=>assets(s,i))}];
+  resetEconomy(s);
+  addLog(s,'川島駅から出発進行！','info');
+  s.turnSeq=++s.seq;
+  startRoulette(s,null,null);
+}
+function startRoulette(s,exclude,resume){
+  s.phase='roulette';
+  s.roulette={seq:++s.seq,by:s.cur,exclude,resume};
+  addLog(s,`🎰 ${s.players[s.cur].name}社長、目的地ルーレットを止めてください！`,'roulette');
+  HOOK_DELAY+=1800;
+}
+function doStop(s){
+  const r=s.roulette;
+  pickDest(s,r.exclude);
+  s.rouletteResult={seq:++s.seq,dest:s.dest};
+  HOOK_DELAY+=3200;
+  s.phase='turn';
+  if(r.resume) landProp(s,r.resume.node);
+}
+function pickDest(s,exclude){
+  let cands=PROP_STATIONS.filter(n=>n!==exclude && !s.players.some(p=>p.pos===n));
+  const avg=n=>s.players.reduce((a,p)=>a+DIST[p.pos][n],0)/s.players.length;
+  const far=cands.filter(n=>avg(n)>=9);
+  if(far.length) cands=far;
+  s.dest=cands[Math.floor(Math.random()*cands.length)];
+  addLog(s,`目的地は「${s.dest}」駅！`,'dest');
+}
+
+/* ----- 移動候補 ----- */
+function moveOptions(start,steps,dest){
+  const res={}, seen=new Set(), path=[start];
+  (function dfs(node,prev,rem){
+    const key=node+'|'+prev+'|'+rem;
+    if(seen.has(key)) return; seen.add(key);
+    if(path.length>1 && node===dest){ if(!res[node]) res[node]=path.slice(); return; }
+    if(rem===0){ if(!res[node]) res[node]=path.slice(); return; }
+    let nb=ADJ[node].filter(n=>n!==prev); if(!nb.length) nb=ADJ[node];
+    for(const n of nb){ path.push(n); dfs(n,node,rem-1); path.pop(); }
+  })(start,null,steps);
+  return res;
+}
+
+/* ----- ルール ----- */
+let HOOK_DELAY = 0; // ホストのCPU待ち時間（演出の長さ）
+function controller(p){ return (p.cpu||p.away)?'cpu':p.owner; }
+function others(s){ return s.players.map((_,j)=>j).filter(j=>j!==s.cur); }
+
+function applyAction(s,a,token){
+  if(!a||s.phase==='end'||s.phase==='lobby') return false;
+  const p=s.players[s.cur];
+  if(token!==controller(p)) return false;
+  switch(a.type){
+    case 'roll': if(s.phase!=='turn') return false; startDice(s,1); return true;
+    case 'card': if(s.phase!=='turn') return false; return useCard(s,a.i|0);
+    case 'choose': if(s.phase!=='choose') return false; return doChoose(s,a.v);
+    case 'cancel': if(s.phase!=='choose') return false; s.phase='turn'; s.choose=null; return true;
+    case 'go': if(s.phase!=='move'||!s.opts||!s.opts[a.node]) return false; doMove(s,s.opts[a.node],false); return true;
+    case 'buy': if(s.phase!=='buy') return false; return buyProp(s,a.i|0);
+    case 'endbuy': if(s.phase!=='buy') return false; finishTurn(s); return true;
+    case 'bet': if(s.phase!=='bet') return false; return doBet(s,a.amt|0);
+    case 'nobet': if(s.phase!=='bet') return false; addLog(s,`${p.name}社長はギャンブルをやめた`,'info'); finishTurn(s); return true;
+    case 'buycard': if(s.phase!=='shop') return false; return buyCard(s,a.k);
+    case 'sellcard': if(s.phase!=='shop') return false; return sellCard(s,a.i|0);
+    case 'endshop': if(s.phase!=='shop') return false; finishTurn(s); return true;
+    case 'stop':
+      if(s.phase==='roulette'){ doStop(s); return true; }
+      if(s.phase==='dice'){ doRoll(s,s.dice.n); return true; }
+      if(s.phase==='sqroul'){ doSqStop(s); return true; }
+      return false;
+  }
+  return false;
+}
+function startDice(s,n){
+  const p=s.players[s.cur];
+  if(p.gyuho>0) n=1;
+  s.phase='dice';
+  s.dice={seq:++s.seq,n,pid:s.cur};
+  HOOK_DELAY+=1300;
+}
+function setRoll(s,dice){
+  const p=s.players[s.cur], total=dice.reduce((a,b)=>a+b,0);
+  s.roll={seq:++s.seq,dice,pid:s.cur};
+  s.opts=moveOptions(p.pos,total,s.dest);
+  s.phase='move';
+  addLog(s,`${p.name}社長、サイコロは ${total}`,'info');
+  HOOK_DELAY+=1500;
+}
+function doRoll(s,n){
+  const p=s.players[s.cur];
+  if(p.gyuho>0){
+    p.gyuho--;
+    addLog(s,`🐄 ${p.name}社長は牛歩中…（のこり${p.gyuho}ターン）`,'bad');
+    setRoll(s,[rnd(1,2)]); return;
+  }
+  setRoll(s,Array.from({length:n},()=>rnd(1,6)));
+}
+function doMove(s,path,warp){
+  const p=s.players[s.cur];
+  s.move={seq:++s.seq,path,pid:s.cur,warp:!!warp};
+  HOOK_DELAY+=warp?900:path.length*170+500;
+  if(!warp && s.bonbi===s.cur){
+    for(const n of path.slice(1)){
+      const j=s.players.findIndex((q,jj)=>jj!==s.cur && q.pos===n);
+      if(j>=0){ s.bonbi=j; addLog(s,`👻 ${p.name}社長が ${s.players[j].name}社長に${BONBI_NAME}をなすりつけた！`,'bonbi'); break; }
+    }
+  }
+  const end=path[path.length-1];
+  p.pos=end; s.opts=null;
+  land(s,end);
+}
+function warpTo(s,node){ const p=s.players[s.cur]; doMove(s,[p.pos,node],true); }
+function canBuyAny(s,st){ const p=s.players[s.cur]; return ST[st].props.some((pr,k)=>s.owners[st+'#'+k]===undefined && pr.price<=p.money); }
+function land(s,node){
+  const p=s.players[s.cur], st=ST[node];
+  if(node===s.dest){ arrive(s); startRoulette(s,node,{node}); return; }
+  if(st.type==='prop'){ landProp(s,node); return; }
+  if(st.type==='gamble'){
+    if(p.money<BET_OPTIONS[0]){ addLog(s,`🎲 ${node}駅はギャンブル駅。でも${p.name}社長はお金が足りない…`,'info'); finishTurn(s); return; }
+    s.phase='bet'; s.bet={node};
+    addLog(s,`🎲 ${p.name}社長、ギャンブル駅に止まった！ いくら賭ける？`,'roulette');
+    HOOK_DELAY+=800;
+    return;
+  }
+  if(st.type==='shop'){
+    if(!canShop(s,node)&&!p.cards.length){ addLog(s,`🏪 ${node}カード売り場に寄ったけど、買えるカードも売るカードもなかった`,'info'); finishTurn(s); return; }
+    s.phase='shop'; s.shop={node};
+    addLog(s,`🏪 ${p.name}社長、${node}カード売り場に到着！`,'card');
+    HOOK_DELAY+=800;
+    return;
+  }
+  startSq(s,node,st.type);
+}
+function canShop(s,node){ const p=s.players[s.cur]; return p.cards.length<MAX_CARDS && SHOPS[node].some(k=>CARD_PRICE[k]<=p.money); }
+function buyCard(s,k){
+  const p=s.players[s.cur], node=s.shop.node;
+  if(!SHOPS[node].includes(k)||CARD_PRICE[k]>p.money||p.cards.length>=MAX_CARDS) return false;
+  p.money-=CARD_PRICE[k]; p.cards.push({k,u:0});
+  addLog(s,`🏪 ${p.name}社長が「${CARDS[k].name}」を ${yen(CARD_PRICE[k])} で買った`,'buy');
+  s.shopBought=(s.shopBought||0)+1;
+  return true;
+}
+function sellCard(s,i){
+  const p=s.players[s.cur], c=p.cards[i];
+  if(!c) return false;
+  const v=sellPrice(c.k);
+  if(v<0&&p.money<-v) return false;
+  p.cards.splice(i,1); p.money+=v;
+  if(v<0) addLog(s,`👿 ${p.name}社長は引き取り料 ${yen(-v)} を払ってデビルカードを処分した`,'buy');
+  else addLog(s,`🏪 ${p.name}社長が「${CARDS[c.k].name}」を ${yen(v)} で売った`,'buy');
+  s.shopSold=(s.shopSold||0)+1;
+  return true;
+}
+function landProp(s,node){
+  const p=s.players[s.cur];
+  if(canBuyAny(s,node)){ s.phase='buy'; return; }
+  addLog(s,`${p.name}社長は「${node}」に到着。買える物件はなかった`,'info');
+  finishTurn(s);
+}
+
+/* ----- 青・赤・黄マス／ギャンブルのルーレット ----- */
+const SQ_BLUE=[3,5,7,10,12,15,20,30], SQ_RED=[2,4,6,8,10,12,15,20];
+// 季節：夏（6〜8月）は青マス2倍・赤マス半分、冬（12〜2月）は青マス半分・赤マス2倍
+const SEASON_MUL={summer:{blue:2,red:0.5},winter:{blue:0.5,red:2}};
+function season(s){ return [6,7,8].includes(s.month)?'summer':[12,1,2].includes(s.month)?'winter':null; }
+function startSq(s,node,type,extra){
+  const p=s.players[s.cur], f=yf(s);
+  let items, se=null, sm=1;
+  if(type==='card') items=Object.keys(CARDS).map(k=>({label:CARDS[k].name,k}));
+  else if(type==='gamble') items=[{label:'当たり！',win:true},{label:'ハズレ',win:false}];
+  else {
+    se=season(s); sm=(SEASON_MUL[se]||{})[type]||1;
+    items=(type==='blue'?SQ_BLUE:SQ_RED).map(m=>{ const v=r100(m*100*f*sm); return {label:yen(v),v}; });
+  }
+  s.phase='sqroul';
+  s.sq=Object.assign({seq:++s.seq,type,node,items,season:se,mul:sm},extra||{});
+  if(type!=='gamble'){
+    const nm={blue:'プラス',red:'マイナス',card:'カード'}[type];
+    const note=sm>1?`（${se==='summer'?'夏':'冬'}なので金額2倍！）`:sm<1?`（${se==='summer'?'夏':'冬'}なので金額半分）`:'';
+    addLog(s,`🎰 ${p.name}社長、${node}駅で${nm}ルーレット！${note}`,'roulette');
+  }
+  HOOK_DELAY+=1300;
+}
+function doSqStop(s){
+  const p=s.players[s.cur], sq=s.sq;
+  let idx;
+  if(sq.type==='card'){ const k=randomCard(); idx=sq.items.findIndex(it=>it.k===k); }
+  else if(sq.type==='gamble') idx=Math.random()<0.45?0:1;
+  else idx=Math.floor(Math.random()*sq.items.length);
+  const it=sq.items[idx];
+  s.sqResult={seq:++s.seq,type:sq.type,label:it.label,bet:sq.bet};
+  HOOK_DELAY+=2800;
+  if(sq.type==='blue'){
+    p.money+=it.v; addLog(s,`🔵 ${p.name}社長、${sq.node}駅で ${yen(it.v)} もらった！`,'good');
+  } else if(sq.type==='red'){
+    p.money-=it.v; addLog(s,`🔴 ${p.name}社長、${sq.node}駅で ${yen(it.v)} 払った…`,'bad');
+    settleDebt(s,s.cur);
+  } else if(sq.type==='gamble'){
+    if(it.win){ p.money+=sq.bet; addLog(s,`🎉 当たり！ ${p.name}社長の賭け金 ${yen(sq.bet)} が ${yen(sq.bet*2)} になった！`,'good'); }
+    else { p.money-=sq.bet; addLog(s,`💸 ハズレ… ${p.name}社長の賭け金 ${yen(sq.bet)} が消えた`,'bad'); settleDebt(s,s.cur); }
+  } else giveCard(s,s.cur,it.k);
+  finishTurn(s);
+}
+function doBet(s,amt){
+  const p=s.players[s.cur];
+  if(!BET_OPTIONS.includes(amt)||amt>p.money) return false;
+  addLog(s,`🎲 ${p.name}社長は ${yen(amt)} を賭けた！`,'roulette');
+  startSq(s,s.bet.node,'gamble',{bet:amt});
+  s.bet=null;
+  return true;
+}
+
+/* ----- カード ----- */
+function randomCard(){
+  const tot=Object.values(CARDS).reduce((a,c)=>a+c.w,0);
+  let r=Math.random()*tot;
+  for(const k in CARDS){ r-=CARDS[k].w; if(r<0) return k; }
+  return 'kyuko';
+}
+function giveCard(s,i,k,quiet){
+  const p=s.players[i]; k=k||randomCard();
+  if(p.cards.length>=MAX_CARDS){ addLog(s,`🟡 ${p.name}社長、カードがいっぱいで「${CARDS[k].name}」を捨てた`,'card'); return false; }
+  p.cards.push({k,u:0});
+  if(!quiet) addLog(s,`🟡 ${p.name}社長が「${CARDS[k].name}」を手に入れた！`,'card');
+  return true;
+}
+function cardBlock(s,i){
+  const p=s.players[s.cur], c=p.cards[i]; if(!c) return 'カードがありません';
+  const d=CARDS[c.k], hasOthers=s.players.length>1;
+  if(d.bad) return 'このカードは使えません';
+  if(p.fuuin>0) return `ふういん中（のこり${p.fuuin}ターン）`;
+  if((d.dice||c.k==='special')&&p.gyuho>0) return '牛歩中は使えません';
+  if(d.dice&&p.jokou>0) return `徐行運転中（のこり${p.jokou}ターン）`;
+  if(c.k==='buttobi'&&p.heli>0) return `ヘリ禁止中（のこり${p.heli}ターン）`;
+  if(c.k==='tokkae'&&p.money<0) return '借金中は使えません';
+  if(c.k==='dokkai'&&s.bonbi==null) return '貧乏神がまだいません';
+  if(c.k==='dubbing'&&p.cards.length<2) return '複製するカードがありません';
+  if(['gyuho','basho','summit','jokou','heli','fuuin','katana','shuyukin','tokkae','bebi','bouzu','toumin','rentai'].includes(c.k)&&!hasOthers) return '相手がいません';
+  if(c.k==='katana'&&!others(s).some(j=>s.players[j].cards.length)) return '相手がカードを持っていません';
+  if(c.k==='dokkai'&&!s.players.some((q,j)=>j!==s.bonbi&&j!==s.cur)) return '行かせる相手がいません';
+  return '';
+}
+function chooseOpts(s,k,ci){
+  const p=s.players[s.cur], kind=CARDS[k].choose;
+  if(kind==='num') return [1,2,3,4,5,6].map(n=>({v:n,label:`${n}マス進む`,sub:''}));
+  if(kind==='city') return CITIES.map(c=>({v:c,label:c+'駅',sub:`目的地まで${DIST[c][s.dest]}駅`,dis:p.pos===c}));
+  if(kind==='card') return p.cards.map((c,j)=>({v:j,label:CARDS[c.k].name,sub:CARDS[c.k].desc,dis:j===ci}));
+  // player
+  let js=others(s);
+  if(k==='dokkai') js=s.players.map((_,j)=>j).filter(j=>j!==s.bonbi&&j!==s.cur);
+  return js.map(j=>{ const q=s.players[j];
+    const sub=k==='katana'?`カード${q.cards.length}枚`:['tokkae','bebi','rentai'].includes(k)?`所持金 ${yen(q.money)}`:`${q.pos}駅`;
+    return {v:j,label:q.name+'社長',sub,dis:k==='katana'&&!q.cards.length}; });
+}
+function useCard(s,i){
+  const p=s.players[s.cur], c=p.cards[i];
+  if(!c||cardBlock(s,i)) return false;
+  const d=CARDS[c.k];
+  if(d.choose){
+    s.phase='choose';
+    s.choose={i,k:c.k,kind:d.choose,opts:chooseOpts(s,c.k,i)};
+    return true;
+  }
+  consumeCard(s,i);
+  applyCard(s,c.k,null);
+  return true;
+}
+function consumeCard(s,i){
+  const p=s.players[s.cur], c=p.cards[i], d=CARDS[c.k];
+  s.turnCards=(s.turnCards||0)+1;
+  addLog(s,`🃏 ${p.name}社長が「${d.name}」を使った！`,'card');
+  if(d.shuyu){
+    c.u++;
+    if(c.u>=2&&Math.random()<0.3){ p.cards.splice(i,1); addLog(s,`💥 「${d.name}」は${c.u}回使って壊れた！`,'card'); }
+  } else p.cards.splice(i,1);
+}
+function doChoose(s,v){
+  const ch=s.choose, opt=ch.opts.find(o=>o.v===v);
+  if(!opt||opt.dis) return false;
+  const p=s.players[s.cur];
+  let cardObj=null;
+  if(ch.kind==='card') cardObj=p.cards[v];
+  s.choose=null; s.phase='turn';
+  consumeCard(s,ch.i);
+  applyCard(s,ch.k,ch.kind==='card'?cardObj:v);
+  return true;
+}
+function applyCard(s,k,v){
+  const i=s.cur, p=s.players[i], d=CARDS[k], O=others(s);
+  if(d.dice){ startDice(s,d.dice); return; }
+  switch(k){
+    case 'special': addLog(s,`✨ ${p.name}社長は ${v}マス進むことにした`,'card'); setRoll(s,[v]); return;
+    case 'kamigaoka': addLog(s,`🏛 ${p.name}社長は上ヶ丘駅へ！`,'card'); warpTo(s,'上ヶ丘'); return;
+    case 'buttobi': { const to=NAMES.filter(n=>n!==p.pos)[Math.floor(Math.random()*(NAMES.length-1))]; addLog(s,`🌀 ${p.name}社長は「${to}」へぶっとんだ！`,'card'); warpTo(s,to); return; }
+    case 'toshi': addLog(s,`🏙 ${p.name}社長は${v}駅へ！`,'card'); warpTo(s,v); return;
+    case 'gyuho': { const q=s.players[v]; q.gyuho=EFFECT_TURNS; addLog(s,`🐄 ${q.name}社長は${EFFECT_TURNS}ターンのあいだ牛歩になった！`,'bad'); return; }
+    case 'basho': { const q=s.players[v]; [p.pos,q.pos]=[q.pos,p.pos]; s.move={seq:++s.seq,path:[q.pos,p.pos],pid:i,warp:true}; addLog(s,`🔁 ${p.name}社長と${q.name}社長の場所が入れかわった！`,'card'); HOOK_DELAY+=900; return; }
+    case 'summit': O.forEach(j=>s.players[j].pos=p.pos); addLog(s,`🤝 サミット開催！ 全員が${p.pos}駅に集まった`,'card'); return;
+    case 'jokou': O.forEach(j=>s.players[j].jokou=EFFECT_TURNS); addLog(s,`🚧 徐行運転！ 他の社長は${EFFECT_TURNS}ターン急行系カードを使えない`,'card'); return;
+    case 'heli': O.forEach(j=>s.players[j].heli=EFFECT_TURNS); addLog(s,`🚁 ヘリ禁止！ 他の社長は${EFFECT_TURNS}ターンぶっとびカードを使えない`,'card'); return;
+    case 'fuuin': O.forEach(j=>s.players[j].fuuin=EFFECT_TURNS); addLog(s,`🔒 ふういん！ 他の社長は${EFFECT_TURNS}ターンカードを使えない`,'card'); return;
+    case 'katana': {
+      const q=s.players[v]; let n=Math.random()<0.2?2:1;
+      while(n-->0&&q.cards.length&&p.cards.length<MAX_CARDS){ const c=q.cards.splice(Math.floor(Math.random()*q.cards.length),1)[0]; p.cards.push(c); addLog(s,`⚔️ ${p.name}社長が${q.name}社長の「${CARDS[c.k].name}」をうばった！`,'card'); }
+      return;
+    }
+    case 'shuyukin': O.forEach(j=>s.players[j].cards.forEach(c=>{ if(c.k==='kyuko_s'){ c.k='kyuko'; c.u=0; } if(c.k==='tokkyu_s'){ c.k='tokkyu'; c.u=0; } })); addLog(s,'🚫 周遊禁止！ 他の社長の周遊カードがふつうのカードになった','card'); return;
+    case 'tokusei': s.players.forEach(q=>{ if(q.money<0) q.money=0; }); addLog(s,'📜 徳政令！ 全員の借金が帳消しになった','good'); return;
+    case 'tokkae': { const q=s.players[v]; [p.money,q.money]=[q.money,p.money]; addLog(s,`💱 ${p.name}社長と${q.name}社長の所持金が入れかわった！`,'card'); settleDebt(s,i); settleDebt(s,v); return; }
+    case 'bebi': { const q=s.players[v]; const t=q.money>0?Math.round(q.money/2):0; q.money-=t; p.money+=t; addLog(s,`🦇 ベビキュラーが${q.name}社長から ${yen(t)} 吸い取った！`,'card'); return; }
+    case 'bouzu': { let t=0; O.forEach(j=>{ const q=s.players[j]; if(q.money>0){ t+=q.money; q.money=0; } }); p.money+=t; addLog(s,`🙏 坊主丸儲け！ ${p.name}社長が全員から ${yen(t)} 奪った！`,'card'); return; }
+    case 'dokkai': { s.bonbi=v; addLog(s,`👻 どっかいけ！ ${BONBI_NAME}は${s.players[v].name}社長のところへ行った`,'bonbi'); return; }
+    case 'toumin': O.forEach(j=>s.players[j].rest+=2); addLog(s,'💤 冬眠！ 他の社長は2ターンお休み','card'); return;
+    case 'mokuteki': addLog(s,'🎯 目的地をもう一度ルーレットで決めなおす！','card'); startRoulette(s,s.dest,null); return;
+    case 'rentai': { p.guarantor=v; addLog(s,`📝 ${s.players[v].name}社長が${p.name}社長の連帯保証人になった`,'card'); return; }
+    case 'dubbing': { if(v&&p.cards.length<MAX_CARDS){ p.cards.push({k:v.k,u:0}); addLog(s,`📼 「${CARDS[v.k].name}」を複製した！`,'card'); } return; }
+  }
+}
+
+/* ----- 到着・物件・お金 ----- */
+// 到着ボーナス：ランダムな額。年が進むほど増える（1年目 2000万〜6000万円、毎年+50%）
+function destBonus(s){ return r100(rnd(20,60)*100*(1+(s.year-1)*0.5)); }
+function arrive(s){
+  const i=s.cur, p=s.players[i], old=s.dest;
+  const bonus=destBonus(s);
+  p.money+=bonus;
+  addLog(s,`🎉 ${p.name}社長が「${old}」に一番乗り！ 援助金 ${yen(bonus)}`,'arrive');
+  if(s.players.length>1){
+    let far=-1, fd=-1;
+    s.players.forEach((q,j)=>{ if(j===i) return; const d=DIST[q.pos][old]+Math.random()*0.5; if(d>fd){ fd=d; far=j; } });
+    const prev=s.bonbi; s.bonbi=far;
+    addLog(s, prev===null||prev===undefined ? `👻 貧乏神${BONBI_NAME}が現れた！ いちばん遠い${s.players[far].name}社長に取り憑いた！`
+      : prev===far ? `👻 ${BONBI_NAME}は ${s.players[far].name}社長に取り憑いたまま…` : `👻 いちばん遠い ${s.players[far].name}社長に${BONBI_NAME}が取り憑いた！`,'bonbi');
+  }
+}
+function buyProp(s,k){
+  const p=s.players[s.cur], st=p.pos, pr=ST[st].props[k];
+  if(!pr) return false;
+  const key=st+'#'+k;
+  if(s.owners[key]!==undefined || pr.price>p.money) return false;
+  s.owners[key]=s.cur; p.money-=pr.price;
+  addLog(s,`🏠 ${p.name}社長が「${pr.name}」を ${yen(pr.price)} で購入`,'buy');
+  if(isMono(s,st,s.cur)) addLog(s,`👑 ${p.name}社長が「${st}」を独占！ 収益が2倍に`,'good');
+  if(!canBuyAny(s,st)) finishTurn(s);
+  return true;
+}
+function settleDebt(s,i){
+  const p=s.players[i];
+  if(p.money<0 && p.guarantor!=null && p.guarantor!==i && s.players[p.guarantor]){
+    const gi=p.guarantor, g=s.players[gi]; p.guarantor=null;
+    g.money-=1000; p.money+=1000;
+    addLog(s,`📝 連帯保証人の${g.name}社長が ${p.name}社長の借金を1000万円負担した！`,'bad');
+    settleDebt(s,gi);
+  }
+  while(p.money<0){
+    // 農林物件は借金があっても売られない
+    const keys=ownedKeys(s,i).filter(k=>ST[k.split('#')[0]].props[+k.split('#')[1]].genre!=='norin');
+    if(!keys.length){ if(ownedKeys(s,i).length) addLog(s,`🌾 ${p.name}社長の農林物件は売られずに守られた`,'info'); break; }
+    keys.sort((a,b)=>ST[a.split('#')[0]].props[+a.split('#')[1]].price-ST[b.split('#')[0]].props[+b.split('#')[1]].price);
+    const k=keys[0], [st,idx]=k.split('#'), pr=ST[st].props[+idx];
+    delete s.owners[k];
+    const got=Math.round(pr.price/2); p.money+=got;
+    addLog(s,`💸 借金返済のため ${p.name}社長が「${pr.name}」を ${yen(got)} で売却`,'bad');
+  }
+}
+
+/* ----- 貧乏神トクメイ・スリの銀二・デビルカード ----- */
+const BONBI_SHOP=[['kyuko',50],['gyuho',50],['kamigaoka',100]];
+function bonbiAct(s,i){
+  const p=s.players[i], r=Math.random();
+  if(r<0.3){
+    p.rest+=1;
+    addLog(s,`${BONBI_NAME}「謝罪動画で売名行為をしたのねん！」 ${p.name}社長は1回休み`,'bonbi_act');
+  } else if(r<0.65){
+    const l=rnd(1,30)*10; p.money-=l;
+    addLog(s,`${BONBI_NAME}「ギャンブルしちゃったのねん！」 ${p.name}社長は ${yen(l)} 持っていかれた`,'bonbi_act');
+    settleDebt(s,i);
+  } else {
+    const [k,price]=BONBI_SHOP[Math.floor(Math.random()*BONBI_SHOP.length)];
+    p.money-=price;
+    addLog(s,`${BONBI_NAME}「${CARDS[k].name}を買ってきたのねん！」 ${p.name}社長は ${yen(price)} 払わされた`,'bonbi_act');
+    giveCard(s,i,k,true);
+    settleDebt(s,i);
+  }
+}
+function ginji(s,i){
+  const p=s.players[i];
+  if(p.money<=0||Math.random()>=0.03) return;
+  const r=Math.random(), [frac,label]=r<0.2?[1,'全額']:r<0.6?[0.5,'半額']:[0.25,'4分の1'];
+  const t=Math.round(p.money*frac); p.money-=t;
+  addLog(s,`🕶 スリの銀二が現れた！ ${p.name}社長の所持金の${label} ${yen(t)} をスられた！`,'ginji');
+}
+function devilDrain(s,i){
+  const p=s.players[i], n=p.cards.filter(c=>c.k==='devil').length;
+  for(let k=0;k<n;k++){ if(p.money<=0) break; const t=Math.max(10,Math.round(p.money*0.1/10)*10); p.money-=t; addLog(s,`👿 デビルカードが${p.name}社長から ${yen(t)} 奪っていった`,'bad'); }
+}
+function tickEffects(p){ ['jokou','heli','fuuin'].forEach(e=>{ if(p[e]>0) p[e]--; }); }
+
+/* ----- ターン進行 ----- */
+function endOfTurnEvents(s,i,rested){
+  const p=s.players[i];
+  if(!rested) ginji(s,i);
+  devilDrain(s,i);
+  if(s.bonbi===i) bonbiAct(s,i);
+  tickEffects(p);
+}
+function advance(s){
+  s.cur=(s.cur+1)%s.players.length;
+  if(s.cur===0){
+    s.month=s.month%12+1;
+    if(s.month===4){
+      settle(s);
+      s.year++;
+      if(s.year>s.years){ endGame(s); return false; }
+      addLog(s,`🌸 ${s.year}年目が始まった`,'info');
+    }
+    maybeEvent(s);
+  }
+  return true;
+}
+function finishTurn(s){
+  endOfTurnEvents(s,s.cur,false);
+  s.phase='turn'; s.opts=null; s.choose=null; s.bet=null; s.shop=null; s.shopBought=0; s.shopSold=0; s.turnCards=0;
+  if(!advance(s)) return;
+  let guard=0;
+  while(s.players[s.cur].rest>0 && guard++<200){
+    const q=s.players[s.cur]; q.rest--;
+    addLog(s,`💤 ${q.name}社長はお休み`,'info');
+    endOfTurnEvents(s,s.cur,true);
+    if(!advance(s)) return;
+  }
+  s.turnSeq=++s.seq;
+}
+function settle(s){
+  const rows=s.players.map((p,i)=>{ const inc=income(s,i); p.money+=inc; return {name:p.name,color:p.color,income:inc,assets:assets(s,i)}; });
+  s.history.push({label:`${s.year}年目`,v:s.players.map((_,i)=>assets(s,i))});
+  s.lastSettle={seq:++s.seq,year:s.year,rows,news:(s.news||[]).slice()};
+  addLog(s,`📊 ${s.year}年目の決算！`,'settle');
+  resetEconomy(s);
+}
+function resetEconomy(s){ s.gmul={}; GENRE_KEYS.forEach(g=>s.gmul[g]=1); s.news=[]; }
+function genreIncome(s,i,g){
+  let sum=0;
+  for(const k in s.owners){ if(s.owners[k]!==i) continue; const [st,idx]=k.split('#'), pr=ST[st].props[+idx]; if(pr.genre===g) sum+=pr.price*pr.rate/100; }
+  return sum;
+}
+function maybeEvent(s){
+  if(Math.random()>=EVENT_RATE) return;
+  const cands=EVENTS.filter(e=>!e.months||e.months.includes(s.month));
+  const ev=cands[Math.floor(Math.random()*cands.length)];
+  const G=GENRES[ev.g];
+  let detail='';
+  if(ev.mul){
+    s.gmul[ev.g]=Math.min(4,Math.max(0.25,s.gmul[ev.g]*ev.mul));
+  } else if(ev.bonus){
+    const got=[];
+    s.players.forEach((p,i)=>{ const v=Math.round(genreIncome(s,i,ev.g)*ev.bonus*(1+(s.year-1)*0.25)/10)*10; if(v>0){ p.money+=v; got.push(`${p.name}社長 +${yen(v)}`); } });
+    detail=got.length?`（${got.join('、')}）`:'（でも持ち主はいなかった…）';
+  }
+  s.news.push({month:s.month,g:ev.g,text:ev.text,good:(ev.mul||2)>=1});
+  addLog(s,`📰 川島ニュース【${G.icon}${G.name}】${ev.text}${detail}`,'news');
+}
+function endGame(s){
+  s.phase='end';
+  s.result=s.players.map((p,i)=>({name:p.name,color:p.color,money:p.money,assets:assets(s,i),props:ownedKeys(s,i).length})).sort((a,b)=>b.assets-a.assets);
+  addLog(s,`🏁 ゲーム終了！ 優勝は ${s.result[0].name}社長`,'arrive');
+  s.turnSeq=++s.seq;
+}
+
+/* ----- CPU ----- */
+function cpuCardChoice(s){
+  const p=s.players[s.cur], me=s.cur, d=DIST[p.pos][s.dest], O=others(s);
+  const idx=k=>p.cards.findIndex((c,i)=>c.k===k&&!cardBlock(s,i));
+  const use=k=>{ const i=idx(k); return i>=0?{type:'card',i}:null; };
+  let a;
+  // 移動系
+  if(d<=6&&(a=use('special'))) return a;
+  if(d>14) for(const k of ['tokkyu_s','tokkyu','kyuko_s','kyuko']) if(a=use(k)) return a;
+  if(d>7) for(const k of ['kyuko_s','kyuko']) if(a=use(k)) return a;
+  if(d>20&&CITIES.some(c=>DIST[c][s.dest]+8<d)&&(a=use('toshi'))) return a;
+  if(DIST['上ヶ丘'][s.dest]+8<d&&(a=use('kamigaoka'))) return a;
+  if(d>24&&Math.random()<0.5&&(a=use('buttobi'))) return a;
+  if((s.turnCards||0)>=1) return null;
+  // 妨害・お金系（1ターン1枚まで）
+  if(s.bonbi===me&&(a=use('dokkai'))) return a;
+  if(p.money<0&&(a=use('tokusei'))) return a;
+  const richest=Math.max(0,...O.map(j=>s.players[j].money));
+  if(O.reduce((t,j)=>t+Math.max(0,s.players[j].money),0)>3000&&(a=use('bouzu'))) return a;
+  if(richest>2000&&(a=use('bebi'))) return a;
+  if(p.money>=0&&richest>p.money+3000&&(a=use('tokkae'))) return a;
+  if(O.some(j=>DIST[s.players[j].pos][s.dest]+8<d)&&(a=use('basho'))) return a;
+  if(d>25&&(a=use('mokuteki'))) return a;
+  if(O.some(j=>s.players[j].cards.some(c=>CARDS[c.k].shuyu))&&(a=use('shuyukin'))) return a;
+  for(const k of ['dubbing','katana','gyuho','rentai','fuuin','jokou','heli','toumin','summit']) if(Math.random()<0.35&&(a=use(k))) return a;
+  return null;
+}
+function cpuChoose(s){
+  const ch=s.choose, p=s.players[s.cur], ok=ch.opts.filter(o=>!o.dis);
+  if(!ok.length) return {type:'cancel'};
+  const by=f=>ok.slice().sort((a,b)=>f(b)-f(a))[0].v;
+  switch(ch.k){
+    case 'special': return {type:'choose',v:Math.min(6,Math.max(1,DIST[p.pos][s.dest]))};
+    case 'toshi': return {type:'choose',v:by(o=>-DIST[o.v][s.dest])};
+    case 'gyuho': case 'basho': return {type:'choose',v:by(o=>-DIST[s.players[o.v].pos][s.dest])};
+    case 'katana': return {type:'choose',v:by(o=>s.players[o.v].cards.length)};
+    case 'tokkae': case 'bebi': case 'rentai': return {type:'choose',v:by(o=>s.players[o.v].money)};
+    case 'dokkai': return {type:'choose',v:by(o=>DIST[s.players[o.v].pos][s.dest])};
+    case 'dubbing': return {type:'choose',v:by(o=>{ const k=p.cards[o.v].k; return k==='devil'?-9:(CARDS[k].dice||0)+(k==='bouzu'?5:0); })};
+  }
+  return {type:'choose',v:ok[0].v};
+}
+function cpuDecide(s){
+  const p=s.players[s.cur];
+  if(s.phase==='roulette'||s.phase==='dice'||s.phase==='sqroul') return {type:'stop'};
+  if(s.phase==='choose') return cpuChoose(s);
+  if(s.phase==='bet'){
+    const want=p.money*0.15, amt=BET_OPTIONS.filter(b=>b<=want&&b<=p.money).pop();
+    return amt?{type:'bet',amt}:{type:'nobet'};
+  }
+  if(s.phase==='turn') return cpuCardChoice(s)||{type:'roll'};
+  if(s.phase==='move'){
+    let best=null, bs=1e9;
+    for(const n in s.opts){
+      const st=ST[n];
+      let sc=DIST[n][s.dest]*10 + ({red:7,blue:-3,card:-2,prop:-1,gamble:1,shop:-2})[st.type];
+      if(n===s.dest) sc=-1000;
+      if(s.bonbi===s.cur && s.opts[n].slice(1).some(x=>s.players.some((q,j)=>j!==s.cur&&q.pos===x))) sc-=40;
+      sc+=Math.random()*3;
+      if(sc<bs){ bs=sc; best=n; }
+    }
+    return {type:'go',node:best};
+  }
+  if(s.phase==='shop'){
+    const dv=p.cards.findIndex(c=>c.k==='devil');
+    if(dv>=0&&p.money>=DEVIL_FEE) return {type:'sellcard',i:dv};
+    const nd=p.cards.findIndex(c=>c.k!=='devil');
+    if(p.money<0&&nd>=0&&(s.shopSold||0)<3) return {type:'sellcard',i:nd};
+    if((s.shopBought||0)>=2) return {type:'endshop'};
+    const reserve=500*yf(s), list=SHOPS[s.shop.node].filter(k=>CARD_PRICE[k]+reserve<=p.money);
+    if(!list.length||p.cards.length>=6) return {type:'endshop'};
+    const pref=['tokkyu_s','kyuko_s','tokkyu','bouzu','bebi','kyuko','special','toshi','dokkai','tokusei'];
+    list.sort((a,b)=>{ const ia=pref.indexOf(a), ib=pref.indexOf(b); return (ia<0?99:ia)-(ib<0?99:ib); });
+    return {type:'buycard',k:list[0]};
+  }
+  if(s.phase==='buy'){
+    const st=p.pos, reserve=300*yf(s);
+    let best=-1, br=-1;
+    ST[st].props.forEach((pr,k)=>{ if(s.owners[st+'#'+k]===undefined && p.money-pr.price>=reserve && pr.rate>br){ br=pr.rate; best=k; } });
+    return best>=0 ? {type:'buy',i:best} : {type:'endbuy'};
+  }
+  return null;
+}
+
+if(typeof module!=='undefined') module.exports={setTrain,GENRES,genreOf,ST,ADJ,NAMES,DIST,LINES,PROP_STATIONS,CARDS,newLobby,addPlayer,initGame,applyAction,cpuDecide,assets,yen,moveOptions,giveCard,cardBlock,useCard};
+
+/* ===== 川鉄すごろく：画面・通信（桃鉄風UI） ===== */
+const $=s=>document.querySelector(s);
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const PREFIX='kawatetsu-sgrk-v1-';
+const TYPE_LABEL={blue:'青マス：お金がもらえる',red:'赤マス：お金を払う',card:'黄マス：カードがもらえる',prop:'物件駅',gamble:'ギャンブル駅：10万〜1億円を賭けて、当たれば2倍',shop:'カード売り場：カードを買える'};
+// 貧乏神トクメイ（ブロック風の白い人形）
+const TOKUMEI_SVG=`<svg viewBox="0 0 24 40" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect x="0" y="16" width="4" height="13" fill="#c9c9c9"/><rect x="20" y="16" width="4" height="13" fill="#c9c9c9"/><rect x="4" y="16" width="16" height="12" fill="#d8d8d8"/><rect x="4" y="27" width="16" height="2" fill="#2f5a1e"/><rect x="4" y="29" width="8" height="11" fill="#dcdcdc"/><rect x="12" y="29" width="8" height="11" fill="#cdcdcd"/><rect x="4" y="0" width="16" height="16" fill="#e4e4e4"/><rect x="7" y="5" width="2.5" height="2.5" fill="#111"/><rect x="14.5" y="5" width="2.5" height="2.5" fill="#111"/><rect x="11" y="9" width="2" height="2" fill="#111"/><rect x="10" y="11" width="1.5" height="1.5" fill="#111"/><rect x="12.5" y="11" width="1.5" height="1.5" fill="#111"/></svg>`;
+function tokumeiIcon(h){ return `<span class="tkm" style="height:${h}px;width:${h*0.6}px">${TOKUMEI_SVG}</span>`; }
+
+function sget(kind,k){ try{ return window[kind].getItem(k); }catch(e){ return null; } }
+function sset(kind,k,v){ try{ window[kind].setItem(k,v); }catch(e){} }
+let myToken=sget('sessionStorage','kt-token');
+if(!myToken){ myToken='t'+Math.random().toString(36).slice(2,10); sset('sessionStorage','kt-token',myToken); }
+
+const net={mode:null,peer:null,conns:[],conn:null,code:null};
+let G=null, myName='';
+
+/* ---------- ホスト（ローカル含む） ---------- */
+const SAVE_KEY='kt-save-v1';
+function saveGame(){
+  if(!G||(net.mode!=='local'&&net.mode!=='host')) return;
+  if(G.phase==='lobby') return;
+  try{
+    if(G.phase==='end') localStorage.removeItem(SAVE_KEY);
+    else localStorage.setItem(SAVE_KEY,JSON.stringify({v:1,mode:net.mode,code:net.code,token:myToken,savedAt:Date.now(),G}));
+  }catch(e){}
+}
+function loadSave(){ try{ const sv=JSON.parse(localStorage.getItem(SAVE_KEY)); return sv&&sv.v===1&&sv.G&&sv.G.players?sv:null; }catch(e){ return null; } }
+function resumeGame(){
+  const sv=loadSave(); if(!sv) return;
+  const g=sv.G;
+  g.players.forEach(p=>{ if(!p.cpu&&p.owner===sv.token) p.owner=myToken; });
+  if(sv.mode==='host'){
+    g.players.forEach(p=>{ if(!p.cpu&&p.owner!==myToken) p.away=true; });
+    G=g; addLog(G,'💾 セーブデータから再開しました。他の社長は同じ部屋コードで入り直してください','info');
+    startHost(sv.code,true);
+  } else {
+    net.mode='local'; G=g; addLog(G,'💾 セーブデータから再開しました','info'); commit();
+  }
+}
+function commit(){
+  saveGame();
+  const snap=JSON.parse(JSON.stringify(G));
+  if(net.mode==='host') net.conns.forEach(c=>{ if(c.open) try{ c.send({t:'state',s:snap}); }catch(e){} });
+  receive(snap); scheduleCpu();
+}
+function hostAct(a,token){ if(applyAction(G,a,token)) commit(); }
+let cpuTimer=null;
+function scheduleCpu(){
+  clearTimeout(cpuTimer);
+  const s=G; if(!s||s.phase==='lobby'||s.phase==='end'){ HOOK_DELAY=0; return; }
+  const p=s.players[s.cur];
+  if(!(p.cpu||p.away)){ HOOK_DELAY=0; return; }
+  const delay=900+HOOK_DELAY+(s.phase==='move'?500:0); HOOK_DELAY=0;
+  cpuTimer=setTimeout(()=>{ const a=cpuDecide(G); if(a) hostAct(a,'cpu'); },delay);
+}
+function sendAct(a){
+  if(net.mode==='client'){ if(net.conn&&net.conn.open) net.conn.send({t:'act',a}); }
+  else hostAct(a,myToken);
+}
+function startLocal(){ net.mode='local'; G=newLobby(); addPlayer(G,myName,myToken,false); commit(); }
+function genCode(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(let i=0;i<5;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
+function startHost(preferCode,resume){
+  if(typeof Peer==='undefined'){ showErr('通信ライブラリを読み込めませんでした。ネット接続を確認してください。'); return; }
+  net.mode='host'; net.code=preferCode||genCode(); setStatus('部屋を準備しています…');
+  const peer=new Peer(PREFIX+net.code); net.peer=peer;
+  peer.on('open',()=>{
+    setStatus('');
+    if(resume){ if(preferCode&&net.code!==preferCode) addLog(G,`部屋コードが ${net.code} に変わりました`,'info'); commit(); pushMsg(`部屋コード ${net.code} で再開しました`,'info'); }
+    else { G=newLobby(); addPlayer(G,myName,myToken,false); commit(); }
+  });
+  peer.on('error',e=>{ if(e.type==='unavailable-id'){ peer.destroy(); startHost(null,resume); return; } pushMsg('通信エラー：'+e.type,'bad'); });
+  peer.on('connection',conn=>{ conn.on('data',d=>onHostData(conn,d)); conn.on('close',()=>onHostClose(conn)); conn.on('error',()=>onHostClose(conn)); });
+}
+function onHostData(conn,d){
+  if(!d||!G) return;
+  if(d.t==='join'){
+    conn.token=String(d.token||'').slice(0,20);
+    if(!net.conns.includes(conn)) net.conns.push(conn);
+    const ex=G.players.find(p=>p.owner===conn.token);
+    if(G.phase==='lobby'){
+      if(!ex){
+        if(G.players.length>=MAX_PLAYERS){ conn.send({t:'full'}); return; }
+        addPlayer(G,String(d.name||'社長'),conn.token,false);
+        addLog(G,`${String(d.name).slice(0,8)}社長が入室しました`,'info');
+      }
+    } else if(ex){ ex.away=false; addLog(G,`${ex.name}社長が戻ってきた`,'info'); }
+    else {
+      // セーブから再開したときなど：同じ名前で代打中の社長がいれば引き継ぐ
+      const live=new Set(net.conns.filter(c=>c!==conn).map(c=>c.token));
+      const nm=String(d.name||'').slice(0,8);
+      const cand=G.players.find(p=>!p.cpu&&p.away&&p.name===nm&&!live.has(p.owner))||G.players.find(p=>!p.cpu&&p.away&&!live.has(p.owner)&&p.owner!==myToken);
+      if(cand){ cand.owner=conn.token; cand.away=false; addLog(G,`${cand.name}社長が戻ってきた`,'info'); }
+    }
+    conn.name=String(d.name||'').slice(0,8);
+    commit();
+  } else if(d.t==='act') hostAct(d.a,conn.token);
+  else if(d.t==='chat') relayChat(conn.token,conn.name,d.i);
+  else if(d.t==='train'){ const p=G.players[d.pid|0]; if(G.phase==='lobby'&&p&&!p.cpu&&p.owner===conn.token&&setTrain(G,d.pid|0,d.v)) commit(); }
+}
+function onHostClose(conn){
+  const i=net.conns.indexOf(conn); if(i<0) return;
+  net.conns.splice(i,1); if(!G) return;
+  if(G.phase==='lobby') G.players=G.players.filter(p=>p.owner!==conn.token);
+  else G.players.forEach(p=>{ if(p.owner===conn.token&&!p.away){ p.away=true; addLog(G,`${p.name}社長の接続が切れたのでCPUが代打します`,'bad'); } });
+  commit();
+}
+function startClient(code){
+  if(typeof Peer==='undefined'){ showErr('通信ライブラリを読み込めませんでした。ネット接続を確認してください。'); return; }
+  code=code.trim().toUpperCase(); if(!code){ showErr('部屋コードを入力してください'); return; }
+  net.mode='client'; net.code=code; setStatus('部屋に接続しています…');
+  const peer=new Peer(); net.peer=peer;
+  peer.on('open',()=>{
+    const conn=peer.connect(PREFIX+code,{reliable:true}); net.conn=conn;
+    conn.on('open',()=>{ setStatus(''); conn.send({t:'join',name:myName,token:myToken}); });
+    conn.on('data',d=>{ if(d.t==='state') receive(d.s); else if(d.t==='chat') showChat(d); else if(d.t==='full') showErr(`この部屋は満員です（最大${MAX_PLAYERS}人）`); });
+    conn.on('close',()=>showErr('ホストとの接続が切れました。ページを再読み込みして同じ部屋コードで入り直すと、続きから参加できます。'));
+  });
+  peer.on('error',e=>{ if(e.type==='peer-unavailable') showErr(`部屋「${code}」が見つかりません。コードを確認してください。`); else showErr('通信エラー：'+e.type); });
+}
+
+/* ---------- オンライン用チャット（定型文） ---------- */
+const CHAT=['あの？','ちがうが？','テンパァ！(癇癪ゥ！)','あーもう','死ね','香るやつしかおらん','ゆずりんごのおばあちゃんおいしいもんね','おお','うお','どわー','こいつなんかもっとるやろ。','俺なんか持ってます。','エクセルシオールの意味は晒すです'];
+let chatLast=0; const chatRate={};
+function isOnline(){ return net.mode==='host'||net.mode==='client'; }
+function openChatPal(){ const el=$('#chatPal'); el.hidden=!el.hidden; if(!el.hidden){ const b=el.querySelector('.chatb'); if(b) b.focus(); } }
+function closeChatPal(){ $('#chatPal').hidden=true; }
+function sendChat(i){
+  closeChatPal();
+  if(Date.now()-chatLast<1500) return; chatLast=Date.now();
+  if(net.mode==='client'){ if(net.conn&&net.conn.open) net.conn.send({t:'chat',i}); }
+  else if(net.mode==='host') relayChat(myToken,myName,i);
+}
+function relayChat(token,name,i){
+  i=i|0; if(!CHAT[i]) return;
+  const now=Date.now(); if(now-(chatRate[token]||0)<1200) return; chatRate[token]=now;
+  const p=G&&G.players.find(q=>q.owner===token&&!q.cpu);
+  const msg={t:'chat',i,name:p?p.name:(name||'観戦者'),color:p?p.color:'#8a92a6',pid:p?G.players.indexOf(p):-1};
+  net.conns.forEach(c=>{ if(c.open) try{ c.send(msg); }catch(e){} });
+  showChat(msg);
+}
+function showChat(m){
+  const text=CHAT[m.i]; if(!text) return;
+  const box=$('#chats'), d=document.createElement('div');
+  d.className='chatmsg'; d.style.setProperty('--pc',m.color||'#8a92a6');
+  d.innerHTML=`<b>${esc(m.name||'')}</b>${esc(text)}`;
+  box.appendChild(d); while(box.children.length>4) box.firstChild.remove();
+  setTimeout(()=>{ d.classList.add('out'); setTimeout(()=>d.remove(),400); },4200);
+  SND.chat();
+  if(m.pid>=0){ view.chatB[m.pid]={text,until:Date.now()+3800}; renderTokens(); setTimeout(renderTokens,3900); }
+}
+
+/* ---------- 受信と演出キュー ---------- */
+const view={s:null,roll:0,move:0,log:0,settle:0,turn:0,rr:0,anim:null,busy:false,resultShown:false,menu:'main',stopKey:null,sr:0,chatB:{},facing:{}};
+const queue=[];
+function receive(s){ queue.push(s); pump(); }
+async function pump(){
+  if(view.busy) return; view.busy=true; renderCmd();
+  while(queue.length){
+    let rsnd=false;
+    const s=queue.shift(), prev=view.s, first=!prev||prev.phase==='lobby'&&s.phase==='lobby';
+    const live=prev&&prev.phase!=='lobby'&&s.phase!=='lobby';
+    const newLogs=s.log.filter(l=>l.seq>view.log);
+    if(s.log.length) view.log=s.log[s.log.length-1].seq;
+    if(s.phase!=='lobby'){
+      if(s.roll&&s.roll.seq>view.roll){ view.roll=s.roll.seq; if(live) await diceStop(s.roll.dice,s.players[s.roll.pid]); if(s.opts) fitNodes([s.players[s.roll.pid].pos,...Object.keys(s.opts)]); }
+      if(s.move&&s.move.seq>view.move){ view.move=s.move.seq; if(live) await moveAnim(s.move,s.players[s.move.pid]); }
+      const arr=newLogs.find(l=>l.kind==='arrive');
+      if(arr&&live&&s.phase!=='end') await arriveFlash(s.players[s.roulette?s.roulette.by:s.cur], prev.dest);
+      if(s.rouletteResult&&s.rouletteResult.seq>view.rr){ view.rr=s.rouletteResult.seq; if(live) await roulStop(s.rouletteResult.dest,`<b>${esc(s.rouletteResult.dest)}</b>駅に決定！`,s.rouletteResult.dest,'hit'); }
+      if(s.sqResult&&s.sqResult.seq>view.sr){ view.sr=s.sqResult.seq; rsnd=true; const r=s.sqResult;
+        if(live) await roulStop(r.label, r.type==='gamble'?(r.label==='当たり！'?`<b>当たり！</b> <span class="yen">${yen(r.bet*2)}</span> になった！`:`<b class="neg">ハズレ…</b> ${yen(r.bet)} が消えた`):r.type==='blue'?`<b>+${esc(r.label)}</b> もらった！`:r.type==='red'?`<b class="neg">−${esc(r.label)}</b> 払った…`:`<b>${esc(r.label)}</b>をゲット！`,null,r.type==='red'||(r.type==='gamble'&&r.label!=='当たり！')?'lose':r.type==='gamble'?'jackpot':r.type==='card'?'card':'good'); }
+    }
+    view.s=s;
+    render();
+    if(s.phase!=='lobby') newLogs.forEach(l=>{ if(!(l.kind==='info'&&/サイコロは/.test(l.text))) pushMsg(l.text,l.kind); });
+    if(live){ const ks=new Set(newLogs.map(l=>l.kind));
+      if(ks.has('buy')) SND.buy(); else if(ks.has('settle')) SND.settle(); else if(ks.has('card')&&!rsnd) SND.card(); }
+    if(live) for(const l of newLogs){
+      if(l.kind==='bonbi_act'||l.kind==='ginji'||(l.kind==='bonbi'&&/現れた/.test(l.text))) await eventFlash(l);
+      else if(l.kind==='news') await newsFlash(l);
+    }
+    if(s.phase!=='lobby'&&s.phase!=='end'&&s.turnSeq>view.turn){
+      view.turn=s.turnSeq; view.menu='main'; view.shopTab='buy';
+      const p=s.players[s.cur]; ensureVisible(p.pos);
+      if(s.phase==='turn'&&canAct(s)) await turnBanner(p);
+    }
+    if(s.lastSettle&&s.lastSettle.seq>view.settle){ view.settle=s.lastSettle.seq; if(live&&s.phase!=='end') showSettle(s.lastSettle); }
+    if(s.phase==='end'&&!view.resultShown){ view.resultShown=true; showResult(s); }
+  }
+  view.busy=false; renderCmd();
+}
+function canAct(s){ if(!s||s.phase==='lobby'||s.phase==='end') return false; const p=s.players[s.cur]; return !p.cpu&&!p.away&&p.owner===myToken; }
+function myPlayerIndex(s){ const cur=s.players[s.cur]; if(cur&&cur.owner===myToken&&!cur.cpu) return s.cur; const i=s.players.findIndex(p=>p.owner===myToken&&!p.cpu); return i>=0?i:s.cur; }
+
+/* ---------- 地図 ---------- */
+const svg=$('#map');
+let vb={x:-40,y:40,w:2420,h:1520};
+function applyVB(){ svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`); }
+function labelOrient(n){ let h=0,v=0; ADJ[n].forEach(m=>{ h+=Math.abs(ST[m].x-ST[n].x); v+=Math.abs(ST[m].y-ST[n].y); }); return h>v?'h':'v'; }
+function buildMap(){
+  let o=`<defs>
+    <pattern id="grass" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="60" height="60" fill="#a9db78"/><path d="M8 14l3-6 3 6M38 44l3-6 3 6" stroke="#93c962" stroke-width="2" fill="none"/></pattern>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="0" flood-color="#000" flood-opacity=".28"/></filter>
+  </defs>
+  <rect x="-900" y="-700" width="4200" height="3100" fill="#5fb4e8"/>
+  <path d="M-260 70 Q600 -10 1200 45 T2420 30 L2440 1590 Q1600 1640 900 1595 T-260 1580 Z" fill="url(#grass)" stroke="#f3e2a6" stroke-width="22" stroke-linejoin="round"/>`;
+  o+='<g id="lines">';
+  LINES.forEach(([ln,c,arr])=>{ o+=`<polyline points="${arr.map(n=>ST[n].x+','+ST[n].y).join(' ')}" fill="none" stroke="#3b3b3b" stroke-width="15" stroke-linejoin="round" stroke-linecap="round"/>`; });
+  LINES.forEach(([ln,c,arr])=>{ o+=`<polyline points="${arr.map(n=>ST[n].x+','+ST[n].y).join(' ')}" fill="none" stroke="#fff" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/><polyline points="${arr.map(n=>ST[n].x+','+ST[n].y).join(' ')}" fill="none" stroke="${c}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="1 0"/>`; });
+  o+='</g><g id="stations">';
+  NAMES.forEach(n=>{
+    const s=ST[n], or=labelOrient(n);
+    o+=`<g class="st" data-st="${esc(n)}"><circle cx="${s.x}" cy="${s.y}" r="24" fill="transparent"/>`;
+    if(s.type==='prop'){
+      o+=`<g filter="url(#sh)"><rect x="${s.x-15}" y="${s.y-12}" width="30" height="25" rx="4" fill="#fff" stroke="#c81e1e" stroke-width="3.5"/><path d="M${s.x-18} ${s.y-10} L${s.x} ${s.y-24} L${s.x+18} ${s.y-10} Z" fill="#e23b2e" stroke="#7a1010" stroke-width="2" stroke-linejoin="round"/></g>`;
+      o+=`<text class="plate" x="${s.x}" y="${s.y-30}" text-anchor="middle">${esc(n)}</text>`;
+    } else {
+      const fill={blue:'#2563eb',red:'#e5322d',card:'#f5c518',gamble:'#8e2bd6',shop:'#12a05c'}[s.type], mark={blue:'+',red:'−',card:'?',gamble:'¥',shop:'店'}[s.type];
+      o+=`<g filter="url(#sh)"><rect x="${s.x-11}" y="${s.y-11}" width="22" height="22" rx="4" fill="${fill}" stroke="#fff" stroke-width="2.5"/></g><text class="mk${s.type==='card'?' dark':''}${s.type==='shop'?' sm':''}" x="${s.x}" y="${s.y+6}" text-anchor="middle">${mark}</text>`;
+      if(or==='h') o+=`<text class="lbl" x="${s.x}" y="${s.y+30}" text-anchor="middle">`+[...n].map((c,i)=>`<tspan x="${s.x}"${i?' dy="1.02em"':''}>${esc(c)}</tspan>`).join('')+'</text>';
+      else o+=`<text class="lbl" x="${s.x+17}" y="${s.y+5}">${esc(n)}</text>`;
+    }
+    o+='</g>';
+  });
+  o+='</g><g id="dyn"></g><g id="tok"></g>';
+  svg.innerHTML=o; applyVB();
+}
+function renderDyn(){
+  const s=view.s; if(!s||s.phase==='lobby') return;
+  let o='';
+  PROP_STATIONS.forEach(n=>{
+    const st=ST[n], w=st.props.length*9;
+    st.props.forEach((p,k)=>{ const ow=s.owners[n+'#'+k]; o+=`<circle cx="${st.x-w/2+4.5+k*9}" cy="${st.y+20}" r="3.8" fill="${ow===undefined?'#fff':s.players[ow].color}" stroke="#333" stroke-width="1.2"/>`; });
+    const o0=s.owners[n+'#0']; if(o0!==undefined&&isMono(s,n,o0)) o+=`<rect x="${st.x-10}" y="${st.y-7}" width="20" height="16" rx="3" fill="${s.players[o0].color}"/><text x="${st.x}" y="${st.y+6}" text-anchor="middle" font-size="13">👑</text>`;
+  });
+  if(s.dest&&s.phase!=='end'&&s.phase!=='roulette'){
+    const d=ST[s.dest];
+    o+=`<circle class="pulse" cx="${d.x}" cy="${d.y}" r="32" fill="none" stroke="#ffe14d" stroke-width="6"/><circle class="pulse" cx="${d.x}" cy="${d.y}" r="32" fill="none" stroke="#e5322d" stroke-width="2.5"/>`;
+    o+=`<g class="flag"><line x1="${d.x+24}" y1="${d.y+4}" x2="${d.x+24}" y2="${d.y-44}" stroke="#333" stroke-width="3"/><path d="M${d.x+25} ${d.y-44} h40 l-8 11 l8 11 h-40 z" fill="#e5322d" stroke="#fff" stroke-width="2"/><text x="${d.x+42}" y="${d.y-28}" text-anchor="middle" class="flagt">目的地</text></g>`;
+  }
+  if(s.phase==='move'&&s.opts&&!view.anim){
+    const mine=canAct(s);
+    for(const n in s.opts){ const st=ST[n]; o+=`<rect class="opt${mine?' mine':''}" x="${st.x-20}" y="${st.y-20}" width="40" height="40" rx="8" fill="rgba(255,225,77,.35)" stroke="#ffcc00" stroke-width="4"/>`; }
+  }
+  $('#dyn').innerHTML=o; renderTokens();
+}
+/* ---- 列車の絵（右向き、原点が車体の中心、車輪の下端がy=14） ---- */
+function trainShape(type,body,band){
+  const W='#fff', D='#1b2333', GL='#bfe6ff';
+  const wheel=(x,r)=>`<circle cx="${x}" cy="${11}" r="${r||3.3}" fill="${D}" stroke="${W}" stroke-width="1.2"/>`;
+  const panto=(x)=>`<path d="M${x-6} -14 L${x} -20 L${x+6} -14 M${x-7} -20 H${x+7}" fill="none" stroke="${D}" stroke-width="1.6"/>`;
+  switch(type){
+    case 'tokkyu': return panto(-6)+`<path d="M-23 -10 Q-23 -14 -19 -14 L6 -14 Q15 -14 23 -1 L23 9 L-23 9 Z" fill="${body}" stroke="${W}" stroke-width="2.4" stroke-linejoin="round"/><path d="M-23 2 H22.4 L23 5 H-23 Z" fill="${band}"/><rect x="-19" y="-10" width="21" height="6" rx="1.5" fill="${GL}" stroke="${D}" stroke-width=".8"/><path d="M8 -11 L14 -11 L19 -3 L10 -3 Z" fill="${GL}" stroke="${D}" stroke-width=".8"/>`+wheel(-14)+wheel(14);
+    case 'kidosha': return `<rect x="-5" y="-18" width="5" height="5" fill="${D}"/><rect x="-21" y="-13" width="42" height="22" rx="4" fill="${body}" stroke="${W}" stroke-width="2.4"/><rect x="-21" y="2" width="42" height="3.5" fill="${band}"/>`+[-17,-8,1].map(x=>`<rect x="${x}" y="-9" width="6" height="6" rx="1" fill="${GL}" stroke="${D}" stroke-width=".8"/>`).join('')+`<rect x="11" y="-9" width="7" height="7" rx="1.5" fill="${GL}" stroke="${D}" stroke-width=".8"/><rect x="18.5" y="4" width="2" height="3" fill="#ffe14d"/>`+wheel(-13)+wheel(13);
+    case 'kikan': return panto(-8)+panto(8)+`<rect x="-19" y="-13" width="38" height="22" rx="2" fill="${body}" stroke="${W}" stroke-width="2.4"/><rect x="-19" y="1" width="38" height="3.5" fill="${band}"/><rect x="-16" y="-9" width="6" height="6" fill="${GL}" stroke="${D}" stroke-width=".8"/><rect x="10" y="-9" width="6" height="6" fill="${GL}" stroke="${D}" stroke-width=".8"/>`+[-5,-1,3].map(x=>`<rect x="${x}" y="-9" width="2" height="7" fill="${D}" opacity=".5"/>`).join('')+wheel(-14,3)+wheel(-6,3)+wheel(6,3)+wheel(14,3);
+    case 'shinkansen': return `<path d="M-24 -7 Q-24 -12 -19 -12 L2 -12 Q16 -12 27 5 L27 9 L-24 9 Z" fill="${body}" stroke="${W}" stroke-width="2.4" stroke-linejoin="round"/><path d="M-24 1 H20 L23.5 4.5 H-24 Z" fill="${band}"/><rect x="-20" y="-8" width="20" height="4" rx="2" fill="${GL}" stroke="${D}" stroke-width=".8"/><path d="M6 -9.5 L12 -9.5 L16 -4 L8 -4 Z" fill="${D}"/>`+wheel(-15,2.8)+wheel(15,2.8);
+    case 'romen': return `<path d="M0 -14 L-5 -21 L2 -24 M-6 -24 H8" fill="none" stroke="${D}" stroke-width="1.6"/><rect x="-17" y="-14" width="34" height="23" rx="8" fill="${body}" stroke="${W}" stroke-width="2.4"/><rect x="-17" y="2" width="34" height="3.5" fill="${band}"/>`+[-13,-4,5].map(x=>`<rect x="${x}" y="-10" width="8" height="9" rx="2" fill="${GL}" stroke="${D}" stroke-width=".8"/>`).join('')+wheel(-9,3)+wheel(9,3);
+    case 'sl': return `<rect x="12" y="-19" width="5" height="9" fill="${D}" stroke="${W}" stroke-width="1"/><rect x="-6" y="-10" width="27" height="14" rx="6" fill="${D}" stroke="${W}" stroke-width="2"/><rect x="-22" y="-16" width="16" height="20" rx="2" fill="${body}" stroke="${W}" stroke-width="2.2"/><rect x="-19" y="-12" width="9" height="6" fill="${GL}" stroke="${D}" stroke-width=".8"/><rect x="-22" y="0" width="16" height="3" fill="${band}"/><circle cx="21" cy="-3" r="2.5" fill="#ffe14d"/>`+`<circle cx="-14" cy="9" r="5" fill="#c81e1e" stroke="${W}" stroke-width="1.3"/><circle cx="2" cy="9" r="5" fill="#c81e1e" stroke="${W}" stroke-width="1.3"/><circle cx="14" cy="10" r="4" fill="#c81e1e" stroke="${W}" stroke-width="1.3"/>`;
+    default: return panto(0)+`<rect x="-22" y="-14" width="44" height="23" rx="3" fill="${body}" stroke="${W}" stroke-width="2.4"/><rect x="-22" y="2" width="44" height="3.5" fill="${band}"/>`+[-18,-10,-2,6].map(x=>`<rect x="${x}" y="-10" width="6" height="7" rx="1" fill="${GL}" stroke="${D}" stroke-width=".8"/>`).join('')+`<rect x="14" y="-10" width="6" height="9" rx="1" fill="${GL}" stroke="${D}" stroke-width=".8"/>`+wheel(-15)+wheel(15);
+  }
+}
+function trainOf(p){ const t=p.train||{}; return {type:t.type||'tsukin',band:t.band||'#ffffff'}; }
+function trainIcon(p,cls,type,color,band){ const t=trainOf(p); return `<svg class="${cls||'ti'}" viewBox="-28 -26 56 42" aria-hidden="true">${trainShape(type||t.type,color||p.color,band||t.band)}</svg>`; }
+function trainSvg(p,x,y,cur,bonbi,pid,noName){
+  const t=trainOf(p), flip=view.facing[pid]===-1;
+  let s=`<g class="token" transform="translate(${x} ${y})">`;
+  if(cur) s+=`<ellipse cx="0" cy="14" rx="24" ry="6" fill="rgba(0,0,0,.28)"/>`;
+  s+=`<g${flip?' transform="scale(-1 1)"':''}>${trainShape(t.type,p.color,t.band)}</g>`;
+  if(!noName) s+=`<text x="0" y="-24" text-anchor="middle" class="tname">${esc([...p.name].slice(0,4).join(''))}</text>`;
+  if(bonbi) s+=`<svg x="16" y="-40" width="24" height="40" viewBox="0 0 24 40">${TOKUMEI_SVG.replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg>`;
+  return s+'</g>';
+}
+function renderTokens(){
+  const s=view.s; if(!s||s.phase==='lobby') return;
+  const groups={};
+  s.players.forEach((p,i)=>{ if(view.anim&&view.anim.pid===i) return; (groups[p.pos]=groups[p.pos]||[]).push(i); });
+  const OFF=[[0,0],[26,-18],[-26,-18],[26,18],[-26,18],[0,-34],[0,34],[46,0]];
+  let o='';
+  for(const n in groups){ const st=ST[n]; const gs=groups[n], cnt=gs.length;
+    gs.forEach((i,k)=>{
+      let f=OFF[k%OFF.length];
+      if(cnt>=4){ const r=30+cnt*5, ang=-Math.PI/2+k*2*Math.PI/cnt; f=[Math.cos(ang)*r*1.25,Math.sin(ang)*r]; }
+      o+=trainSvg(s.players[i],st.x+f[0],st.y+f[1],i===s.cur,s.bonbi===i,i,cnt>=4&&i!==s.cur);
+    }); }
+  if(view.anim) o+=trainSvg(s.players[view.anim.pid],view.anim.x,view.anim.y,true,s.bonbi===view.anim.pid,view.anim.pid);
+  const now=Date.now();
+  for(const pid in view.chatB){
+    const c=view.chatB[pid], p=s.players[pid]; if(!p||c.until<now) continue;
+    const pt=view.anim&&view.anim.pid==pid?view.anim:ST[p.pos], w=[...c.text].length*17+24;
+    o+=`<g class="cbub" transform="translate(${pt.x} ${pt.y-44})"><rect x="${-w/2}" y="-34" width="${w}" height="34" rx="12" fill="#fff" stroke="${p.color}" stroke-width="3"/><path d="M-8 -1 L0 12 L8 -1 Z" fill="#fff" stroke="${p.color}" stroke-width="3" stroke-linejoin="round"/><rect x="-9" y="-4" width="18" height="5" fill="#fff"/><text x="0" y="-11" text-anchor="middle" class="cbt">${esc(c.text)}</text></g>`;
+  }
+  $('#tok').innerHTML=o;
+}
+function toSvg(cx,cy){ const pt=svg.createSVGPoint(); pt.x=cx; pt.y=cy; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
+function zoomAt(cx,cy,f){ const nw=Math.min(3200,Math.max(260,vb.w*f)); f=nw/vb.w; vb.x=cx-(cx-vb.x)*f; vb.y=cy-(cy-vb.y)*f; vb.w=nw; vb.h*=f; applyVB(); }
+function centerOn(x,y,w){ if(w){ const r=vb.h/vb.w; vb.w=w; vb.h=w*r; } vb.x=x-vb.w/2; vb.y=y-vb.h/2; applyVB(); }
+function ensureVisible(n){
+  const st=ST[n], r=svg.getBoundingClientRect(); if(!r.width) return;
+  const a=toSvg(r.left+r.width*.18,r.top+r.height*.2), b=toSvg(r.right-r.width*.18,r.bottom-r.height*.3);
+  if(st.x<a.x||st.x>b.x||st.y<a.y||st.y>b.y) centerOn(st.x,st.y);
+}
+function fitNodes(ns){
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; ns.forEach(n=>{ const p=ST[n]; x0=Math.min(x0,p.x); y0=Math.min(y0,p.y); x1=Math.max(x1,p.x); y1=Math.max(y1,p.y); });
+  const r=svg.getBoundingClientRect(); if(!r.width) return;
+  const asp=r.height/r.width, pad=innerWidth<820?1.9:1.6;
+  let w=Math.max(700,(x1-x0)*pad,(y1-y0)*pad/asp); w=Math.min(w,2600);
+  vb.w=w; vb.h=w*asp; vb.x=(x0+x1)/2-w/2; vb.y=(y0+y1)/2-vb.h/2+(innerWidth<820?vb.h*.08:0); applyVB();
+}
+function fitAll(){ vb={x:-40,y:40,w:2420,h:1520}; applyVB(); }
+(function setupPan(){
+  const pts=new Map(); let moved=0,downTarget=null,pinch=null;
+  svg.addEventListener('pointerdown',e=>{ svg.setPointerCapture(e.pointerId); pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); if(pts.size===1){ moved=0; downTarget=e.target; } if(pts.size===2){ const [a,b]=[...pts.values()]; pinch={d:Math.hypot(a.x-b.x,a.y-b.y)}; moved=99; } });
+  svg.addEventListener('pointermove',e=>{
+    if(!pts.has(e.pointerId)) return;
+    const prev=pts.get(e.pointerId), cur={x:e.clientX,y:e.clientY};
+    if(pts.size===1){ moved+=Math.abs(cur.x-prev.x)+Math.abs(cur.y-prev.y); const p0=toSvg(prev.x,prev.y), p1=toSvg(cur.x,cur.y); vb.x-=p1.x-p0.x; vb.y-=p1.y-p0.y; applyVB(); }
+    pts.set(e.pointerId,cur);
+    if(pts.size===2&&pinch){ const [a,b]=[...pts.values()], d=Math.hypot(a.x-b.x,a.y-b.y), m=toSvg((a.x+b.x)/2,(a.y+b.y)/2); zoomAt(m.x,m.y,pinch.d/d); pinch.d=d; }
+  });
+  const up=e=>{ if(!pts.has(e.pointerId)) return; pts.delete(e.pointerId); if(pts.size<2) pinch=null; if(pts.size===0&&moved<8&&downTarget){ const g=downTarget.closest&&downTarget.closest('[data-st]'); if(g) tapStation(g.getAttribute('data-st')); } if(pts.size===0) downTarget=null; };
+  svg.addEventListener('pointerup',up); svg.addEventListener('pointercancel',up);
+  svg.addEventListener('wheel',e=>{ e.preventDefault(); const m=toSvg(e.clientX,e.clientY); zoomAt(m.x,m.y,e.deltaY>0?1.15:1/1.15); },{passive:false});
+})();
+function tapStation(n){
+  const s=view.s; if(!s||s.phase==='lobby') return;
+  if(s.phase==='move'&&canAct(s)&&!view.busy&&s.opts&&s.opts[n]){ sendAct({type:'go',node:n}); return; }
+  showStation(n);
+}
+
+/* ---------- メッセージウィンドウ ---------- */
+const msgQ=[]; let msgBusy=false;
+function pushMsg(text,kind){ msgQ.push({text,kind}); if(msgQ.length>8) msgQ.splice(0,msgQ.length-8); runMsg(); }
+async function runMsg(){
+  if(msgBusy) return; msgBusy=true;
+  const el=$('#msgText');
+  while(msgQ.length){
+    const m=msgQ.shift(), fast=RM||msgQ.length>2;
+    el.className='k-'+m.kind; $('#msgWin').classList.remove('more');
+    if(fast) el.textContent=m.text;
+    else { el.textContent=''; for(const ch of m.text){ el.textContent+=ch; await sleep(24); } }
+    if(msgQ.length) $('#msgWin').classList.add('more');
+    await sleep(fast?450:1000);
+  }
+  $('#msgWin').classList.remove('more');
+  msgBusy=false;
+}
+
+/* ---------- 効果音（Web Audioで合成、外部ファイルなし） ---------- */
+let SND_ON=sget('localStorage','kt-sound')!=='off', AC=null;
+function audio(){ try{ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){ AC=null; } return AC; }
+function tone(f,dur,type,vol,when,slide){
+  if(!SND_ON) return; const c=audio(); if(!c) return;
+  const t=c.currentTime+(when||0), o=c.createOscillator(), g=c.createGain();
+  o.type=type||'square'; o.frequency.setValueAtTime(f,t);
+  if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(40,f+slide),t+dur);
+  g.gain.setValueAtTime(vol||0.06,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.03);
+}
+function melody(notes,type,vol){ let w=0; notes.forEach(([f,d])=>{ if(f) tone(f,d*0.92,type,vol,w); w+=d; }); }
+const SND={
+  click(){ tone(900,.04,'square',.035); },
+  tick(){ tone(1250,.025,'square',.025); },
+  dice(){ tone(260+Math.random()*240,.03,'square',.03); },
+  diceStop(){ tone(180,.12,'square',.08); tone(360,.18,'triangle',.06,.06); },
+  step(){ tone(620,.05,'triangle',.07); tone(930,.04,'triangle',.03,.03); },
+  warp(){ tone(300,.6,'sine',.07,0,1500); },
+  hit(){ melody([[784,.08],[988,.08],[1319,.25]],'square',.06); },
+  good(){ melody([[1319,.07],[1760,.18]],'square',.05); tone(2637,.25,'triangle',.03,.1); },
+  lose(){ melody([[392,.13],[330,.13],[262,.32]],'sawtooth',.045); },
+  jackpot(){ melody([[523,.08],[659,.08],[784,.08],[1047,.08],[1319,.08],[1568,.35]],'square',.06); },
+  card(){ melody([[1047,.06],[1319,.06],[1568,.06],[2093,.18]],'triangle',.07); },
+  buy(){ melody([[988,.06],[1319,.16]],'square',.05); tone(2093,.2,'triangle',.03,.08); },
+  arrive(){ melody([[523,.12],[659,.12],[784,.12],[1047,.28],[784,.12],[1047,.5]],'square',.065); melody([[262,.36],[392,.4],[523,.5]],'triangle',.05); },
+  turn(){ melody([[659,.08],[880,.16]],'triangle',.07); },
+  settle(){ melody([[392,.1],[523,.1],[659,.1],[784,.3],[659,.1],[784,.4]],'square',.055); },
+  bonbi(){ tone(330,.7,'sawtooth',.04,0,-180); tone(338,.7,'sawtooth',.035,.02,-190); melody([[0,.45],[196,.14],[185,.14],[175,.36]],'square',.05); },
+  news(){ melody([[880,.1],[1175,.1],[1480,.1],[1760,.3]],'triangle',.07); tone(440,.4,'square',.03); },
+  chat(){ tone(1046,.06,'sine',.06); tone(1568,.09,'sine',.05,.06); },
+  ginji(){ melody([[440,.08],[0,.05],[466,.08],[0,.05],[440,.08],[0,.05],[349,.35]],'triangle',.08); },
+};
+/* ---------- 演出 ---------- */
+/* ---- サイコロ（自分で止める） ---- */
+const dz={spinning:false,timer:null,key:null};
+function diceBuild(n,p){
+  const el=$('#dice');
+  el.innerHTML=`<div class="win dbox"><div class="who"><span class="pc" style="--pc:${p.color}"></span>${esc(p.name)}社長のサイコロ</div><div class="drow">${Array.from({length:n},()=>'<span class="die">?</span>').join('')}</div><div class="sum">&nbsp;</div><button id="dStop" class="stopbtn" hidden>ストップ！</button><p id="dWait" class="waitp" hidden>サイコロが止まるのを待っています…</p></div>`;
+  el.hidden=false;
+  $('#dStop').onclick=()=>{ if(view.stopKey===dz.key) return; view.stopKey=dz.key; $('#dStop').hidden=true; sendAct({type:'stop'}); };
+  clearInterval(dz.timer);
+  const dies=[...el.querySelectorAll('.die')];
+  let dt=0; dz.timer=setInterval(()=>{ dies.forEach(d=>{ d.textContent=rnd(1,6); d.classList.toggle('roll'); }); if(dt++%2===0) SND.dice(); },RM?250:70);
+  dz.spinning=true;
+}
+function diceSpin(s){
+  const key='d'+s.dice.seq, p=s.players[s.dice.pid], mine=canAct(s);
+  if(dz.key!==key){ dz.key=key; diceBuild(s.dice.n,p); }
+  const showBtn=mine&&view.stopKey!==key;
+  $('#dStop').hidden=!showBtn; $('#dWait').hidden=mine;
+  if(showBtn) setTimeout(()=>{ const b=$('#dStop'); if(b) b.focus(); },50);
+}
+async function diceStop(dice,p){
+  if(!dz.spinning){ diceBuild(dice.length,p); await sleep(RM?100:400); }
+  clearInterval(dz.timer);
+  const el=$('#dice'), dies=[...el.querySelectorAll('.die')], sum=dice.reduce((a,b)=>a+b,0);
+  $('#dStop').hidden=true; $('#dWait').hidden=true;
+  let d=70;
+  for(let k=0;k<(RM?0:5);k++){ dies.forEach(x=>{ x.textContent=rnd(1,6); x.classList.toggle('roll'); }); SND.dice(); await sleep(d); d*=1.45; }
+  SND.diceStop();
+  dies.forEach((x,i)=>{ x.textContent=dice[i]; x.classList.remove('roll'); x.classList.add('fix'); });
+  el.querySelector('.sum').innerHTML=`<b>${sum}</b> 駅すすめる！`;
+  await sleep(RM?500:1000);
+  el.hidden=true; dz.spinning=false;
+}
+function moveAnim(m,p){
+  return new Promise(res=>{
+    const path=m.path; if(path.length<2){ res(); return; }
+    ensureVisible(path[0]);
+    const step=m.warp?(RM?200:800):(RM?40:200);
+    const pts=path.map(n=>ST[n]); let t0=null;
+    const sw=$('#stepWin');
+    if(!m.warp){ sw.hidden=false; sw.style.setProperty('--pc',p.color); }
+    let lastI=-1; if(m.warp) SND.warp();
+    function frame(ts){
+      if(t0===null) t0=ts;
+      const e=(ts-t0)/step, i=Math.floor(e);
+      if(i!==lastI&&!m.warp&&i<pts.length-1){ lastI=i; SND.step(); }
+      if(i>=pts.length-1){ view.anim=null; sw.hidden=true; renderTokens(); res(); return; }
+      if(!m.warp) $('#stepN').textContent=pts.length-1-i;
+      const f=e-i, a=pts[i], b=pts[i+1];
+      if(Math.abs(b.x-a.x)>2) view.facing[m.pid]=b.x<a.x?-1:1;
+      view.anim={pid:m.pid,x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f};
+      renderTokens(); requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  });
+}
+async function arriveFlash(p,dest){
+  const el=$('#arrive');
+  el.innerHTML=`<div class="arr-in"><div class="arr-big">目的地 到着！！</div><div class="win arr-sub"><span class="pc" style="--pc:${p?p.color:'#fff'}"></span>${esc(p?p.name:'')}社長が「${esc(dest||'')}」駅に一番乗り！</div></div>`;
+  el.hidden=false; SND.arrive(); await sleep(RM?900:2000); el.hidden=true;
+}
+async function eventFlash(l){
+  const el=$('#evflash');
+  let h;
+  if(l.kind==='ginji') h=`<div class="win evbox ginji"><div class="evicon">🕶</div><div><div class="evtitle">スリの銀二が現れた！</div><p>${esc(l.text.replace(/^🕶 スリの銀二が現れた！ /,''))}</p></div></div>`;
+  else {
+    const m=l.text.match(/「(.*?)」\s*(.*)$/);
+    const quote=m?m[1]:'', rest=m?m[2]:l.text.replace(/^👻 /,'');
+    h=`<div class="win evbox bonbi"><div class="evtk">${TOKUMEI_SVG}</div><div><div class="evtitle">貧乏神 ${BONBI_NAME}</div>${quote?`<div class="bubble">${esc(quote)}</div>`:''}<p>${esc(rest)}</p></div></div>`;
+  }
+  el.innerHTML=h; el.hidden=false; if(l.kind==='ginji') SND.ginji(); else SND.bonbi(); await sleep(RM?1000:2300); el.hidden=true;
+}
+async function turnBanner(p){
+  const b=$('#banner');
+  b.innerHTML=`<div class="win ban-in" style="--pc:${p.color}"><span class="pc"></span>${esc(p.name)}社長の番です</div>`;
+  b.hidden=false; SND.turn(); await sleep(RM?500:1100); b.hidden=true;
+}
+
+/* ---------- ルーレット（目的地・青赤黄マス共通） ---------- */
+const roul={spinning:false,timer:null,idx:0,list:[],key:null};
+const SQ_TITLE={blue:'プラス駅ルーレット',red:'マイナス駅ルーレット',card:'カード駅ルーレット',gamble:'ギャンブルルーレット',dest:'目的地ルーレット'};
+function roulDraw(){ const L=roul.list,i=roul.idx,n=L.length; $('#rPrev').textContent=L[(i-1+n)%n]; $('#rCur').textContent=L[i]; $('#rNext').textContent=L[(i+1)%n]; }
+function roulStart(key,list,kind){
+  if(roul.spinning&&roul.key===key) return;
+  clearInterval(roul.timer);
+  roul.key=key; roul.kind=kind; roul.spinning=true;
+  let L=shuffle(list.slice()); while(L.length<6) L=L.concat(shuffle(list.slice()));
+  roul.list=L; roul.idx=0;
+  $('#roulWin').className='win k-'+kind; $('#roulTitle').textContent=SQ_TITLE[kind];
+  $('#rInfo').textContent=''; $('#roul').hidden=false; roulDraw();
+  roul.timer=setInterval(()=>{ roul.idx=(roul.idx+1)%roul.list.length; roulDraw(); SND.tick(); },RM?220:(kind==='dest'?55:75));
+}
+async function roulStop(label,infoHtml,focusNode,sound){
+  if(!roul.spinning) return;
+  clearInterval(roul.timer);
+  $('#rStop').hidden=true; $('#rWait').hidden=true;
+  const L=roul.list, N=RM?1:(roul.kind==='dest'?14:11), target=(roul.idx+N)%L.length, di=L.indexOf(label);
+  if(di>=0) [L[target],L[di]]=[L[di],L[target]];
+  let d=60;
+  for(let k=0;k<N;k++){ roul.idx=(roul.idx+1)%L.length; roulDraw(); SND.tick(); await sleep(d); d*=1.2; }
+  $('#rCur').textContent=label;
+  $('#roulWin').classList.add('hit'); (SND[sound]||SND.hit)();
+  $('#rInfo').innerHTML=infoHtml;
+  await sleep(RM?900:1900);
+  $('#roul').hidden=true; roul.spinning=false;
+  if(focusNode){ const st=ST[focusNode]; centerOn(st.x,st.y,Math.min(vb.w,1100)); await sleep(RM?200:700); }
+}
+function renderRoulette(s){
+  let key,by;
+  if(s.phase==='roulette'){ key='r'+s.roulette.seq; by=s.roulette.by; roulStart(key,PROP_STATIONS,'dest'); }
+  else if(s.phase==='sqroul'){ key='s'+s.sq.seq; by=s.cur; roulStart(key,s.sq.items.map(i=>i.label),s.sq.type); }
+  else return;
+  const bp=s.players[by], mine=canAct(s), showBtn=mine&&view.stopKey!==key;
+  $('#rWho').innerHTML=`<span class="pc" style="--pc:${bp.color}"></span>${esc(bp.name)}社長のルーレット`+(s.phase==='sqroul'?`（${esc(s.sq.node)}駅）`:'')+(s.phase==='sqroul'&&s.sq.type==='gamble'?`<div class="senote gamble">賭け金 ${yen(s.sq.bet)}</div>`:'')+(s.phase==='sqroul'&&s.sq.mul&&s.sq.mul!==1?`<div class="senote ${s.sq.season}">${s.sq.season==='summer'?'☀ 夏':'❄ 冬'}なので金額${s.sq.mul>1?'2倍！':'半分'}</div>`:'');
+  $('#rStop').hidden=!showBtn; $('#rWait').hidden=mine;
+  if(showBtn) setTimeout(()=>$('#rStop').focus(),50);
+}
+
+/* ---------- 画面描画 ---------- */
+function render(){
+  const s=view.s; if(!s) return;
+  $('#title').hidden=true;
+  $('#zChat').hidden=!isOnline(); $('#lChat').hidden=!isOnline();
+  if(s.phase==='lobby'){ $('#lobby').hidden=false; renderLobby(s); return; }
+  $('#lobby').hidden=true; $('#game').hidden=false;
+  renderTop(s); renderPlayers(s); renderDyn(); renderCmd(); renderRoulette(s); if(s.phase==='dice') diceSpin(s);
+}
+function renderTop(s){
+  $('#dYear').textContent=`${Math.min(s.year,s.years)}年目`;
+  $('#dMonth').textContent=s.phase==='end'?'終了':`${s.month}月`;
+  const se=s.phase==='end'?null:season(s);
+  $('#dSeason').textContent=se==='summer'?'☀ 夏':se==='winter'?'❄ 冬':'';
+  $('#dSeason').className=se||'';
+  $('#game').classList.toggle('summer',se==='summer'); $('#game').classList.toggle('winter',se==='winter');
+  $('#dLeft').textContent=s.phase==='end'?'':`のこり${(s.years-s.year)*12+((3-s.month+12)%12)+1}か月`;
+  const vi=myPlayerIndex(s), vp=s.players[vi];
+  if(s.phase==='roulette'||!s.dest){ $('#destName').textContent='？？？'; $('#destLeft').textContent='ルーレット中'; }
+  else if(s.phase==='end'){ $('#destName').textContent='ゲーム終了'; $('#destName').classList.add('noeki'); $('#destLeft').textContent=''; }
+  else { $('#destName').textContent=s.dest; $('#destLeft').innerHTML=`${esc(vp.name)}社長から あと<b>${DIST[vp.pos][s.dest]}</b>駅`; }
+  $('#roomTag').textContent=net.mode==='host'||net.mode==='client'?`部屋 ${net.code}`:'';
+}
+function renderPlayers(s){
+  $('#players').classList.toggle('many',s.players.length>5);
+  $('#players').innerHTML=s.players.map((p,i)=>`<li class="win pw${i===s.cur&&s.phase!=='end'?' cur':''}" style="--pc:${p.color}">
+    <div class="pn">${trainIcon(p,'ti pwt')}${esc(p.name)}社長${p.cpu?'<i>CPU</i>':''}${p.away?'<i>代打</i>':''}${s.bonbi===i?`<span class="bb" title="貧乏神${BONBI_NAME}">${tokumeiIcon(18)}</span>`:''}</div>
+    <div class="pm${p.money<0?' neg':''}">${yen(p.money)}</div>
+    <div class="pa">総資産 ${yen(assets(s,i))}</div>${effTags(p)}</li>`).join('');
+}
+function cmdBtn(label,action,opt){ opt=opt||{}; return `<button class="cmd${opt.cls?' '+opt.cls:''}" ${opt.dis?'disabled':''} onclick="${action}">${label}${opt.sub?`<small>${opt.sub}</small>`:''}</button>`; }
+function renderCmd(){
+  const s=view.s, box=$('#cmdWin'); if(!s||s.phase==='lobby') return;
+  const p=s.players[s.cur], mine=canAct(s);
+  let h='';
+  const infoCmds=cmdBtn('目的地を見る','zoomDest()')+cmdBtn('全国地図','fitAll()')+cmdBtn('社長情報','showStats()')+cmdBtn('物件情報','showMyProps()')+cmdBtn('川島ニュース','showNews()')+cmdBtn('できごと','showLog()');
+  if(s.phase==='end'){ box.innerHTML=`<div class="ch">ゲーム終了</div>`+cmdBtn('結果を見る','showResult(view.s)')+infoCmds; box.hidden=false; $('#buyWin').hidden=true; return; }
+  $('#buyWin').hidden=!(['buy','choose','bet','shop'].includes(s.phase)&&mine&&!view.busy);
+  if(view.busy||s.phase==='roulette'||s.phase==='sqroul'||s.phase==='dice'||!mine){
+    const w=view.busy?'':s.phase==='dice'?'サイコロ中…':s.phase==='roulette'||s.phase==='sqroul'?'ルーレット中…':(p.cpu||p.away?'CPUが考え中…':`${esc(p.name)}社長が考え中…`);
+    box.innerHTML=`<div class="ch"><span class="pc" style="--pc:${p.color}"></span>${esc(p.name)}社長の番</div>${w?`<p class="wait">${w}</p>`:''}`+infoCmds;
+    box.hidden=false; return;
+  }
+  if(s.phase==='turn'){
+    if(view.menu==='cards'){
+      h=`<div class="ch">カード</div>`+(p.cards.length?p.cards.map((c,i)=>{ const d=CARDS[c.k], why=cardBlock(s,i); return cmdBtn(d.name+(d.shuyu&&c.u?`<em>（${c.u}回使用）</em>`:''),`sendAct({type:'card',i:${i}})`,{sub:why?'⛔ '+why:d.desc,cls:'cardcmd'+(d.bad?' badcard':''),dis:!!why}); }).join(''):'<p class="wait">カードを持っていません</p>')+cmdBtn('もどる',"view.menu='main';renderCmd()",{cls:'back'});
+    } else {
+      h=`<div class="ch"><span class="pc" style="--pc:${p.color}"></span>${esc(p.name)}社長、どうする？</div>`+cmdBtn('サイコロ',"sendAct({type:'roll'})",{cls:'main'})+cmdBtn(`カード（${p.cards.length}枚）`,"view.menu='cards';renderCmd()",{dis:!p.cards.length})+infoCmds;
+    }
+  } else if(s.phase==='move'){
+    h=`<div class="ch">どの駅に止まる？</div><p class="wait">光っている駅をタップしてもOK</p><div class="optlist">`;
+    Object.keys(s.opts).sort((a,b)=>DIST[a][s.dest]-DIST[b][s.dest]).forEach(n=>{
+      const t=ST[n].type, isD=n===s.dest;
+      h+=cmdBtn(`<span class="sqm t-${t}"></span>${esc(n)}`,`sendAct({type:'go',node:'${esc(n)}'})`,{sub:isD?'🚩 目的地！':`目的地まで${DIST[n][s.dest]}駅`,cls:isD?'destcmd':''});
+    });
+    h+='</div>';
+  } else if(['buy','choose','bet','shop'].includes(s.phase)){
+    if(s.phase==='buy') renderBuy(s); else if(s.phase==='choose') renderChoose(s); else if(s.phase==='shop') renderShop(s); else renderBet(s);
+    box.hidden=true; const f=$('#buyWin .cmd:not([disabled])'); if(f&&!document.activeElement.closest('#buyWin,.mbox')) f.focus({preventScroll:true}); return;
+  }
+  box.innerHTML=h; box.hidden=false;
+  const first=box.querySelector('.cmd:not([disabled])'); if(first&&!document.activeElement.closest('#cmdWin,#buyWin,.mbox')) first.focus({preventScroll:true});
+}
+function renderBuy(s){
+  const p=s.players[s.cur], st=ST[p.pos];
+  let h=`<div class="bh"><span class="bt">${esc(p.pos)}駅の物件</span><span>所持金 <b class="yen">${yen(p.money)}</b></span></div><div class="bcols"><span>物件名</span><span>価格</span><span>収益率</span></div><div class="blist">`;
+  st.props.forEach((pr,k)=>{
+    const o=s.owners[p.pos+'#'+k], own=o!==undefined;
+    const tail=own?`<span class="own" style="--pc:${s.players[o].color}">${esc(s.players[o].name)}</span>`:`<span>${pr.rate}%</span>`;
+    h+=`<button class="cmd brow${own?' owned':''}" ${own||pr.price>p.money?'disabled':''} onclick="sendAct({type:'buy',i:${k}})"><span>${gtag(pr.genre)}${esc(pr.name)}${gmulTag(s,pr.genre)}</span><span class="yen">${yen(pr.price)}</span>${tail}</button>`;
+  });
+  h+=`</div><button class="cmd back" onclick="sendAct({type:'endbuy'})">やめる</button><p class="wait">駅の物件をぜんぶ買うと独占！ 決算の収益が2倍になります。🌾農林物件は借金になっても売られません</p>`;
+  $('#buyWin').innerHTML=h;
+}
+function renderChoose(s){
+  const ch=s.choose, d=CARDS[ch.k];
+  const title={player:'だれに使う？',city:'どの都市へ行く？',num:'何マス進む？',card:'どのカードを複製する？'}[ch.kind];
+  let h=`<div class="bh"><span class="bt">${d.name}</span><span>${title}</span></div><div class="blist">`;
+  ch.opts.forEach(o=>{ h+=`<button class="cmd" ${o.dis?'disabled':''} onclick='sendAct({type:"choose",v:${JSON.stringify(o.v)}})'>${esc(o.label)}${o.sub?`<small>${esc(o.sub)}</small>`:''}</button>`; });
+  h+=`</div><button class="cmd back" onclick="sendAct({type:'cancel'})">やめる（カードは使わない）</button>`;
+  $('#buyWin').innerHTML=h;
+}
+function renderShop(s){
+  const p=s.players[s.cur], node=s.shop.node, full=p.cards.length>=MAX_CARDS, tab=view.shopTab||'buy';
+  let h=`<div class="bh"><span class="bt">🏪 ${esc(node)}カード売り場</span><span>所持金 <b class="yen">${yen(p.money)}</b></span></div>
+  <div class="tabs"><button class="tab${tab==='buy'?' on':''}" onclick="view.shopTab='buy';renderShop(view.s)">買う</button><button class="tab${tab==='sell'?' on':''}" onclick="view.shopTab='sell';renderShop(view.s)">売る（${p.cards.length}枚）</button></div>
+  <p class="wait">手持ち ${p.cards.length}/${MAX_CARDS}枚${full&&tab==='buy'?'（いっぱいです。売ると空きができます）':''}${tab==='sell'?'　カードは買値の半額で売れます':''}</p><div class="blist">`;
+  if(tab==='buy') SHOPS[node].forEach(k=>{ const pr=CARD_PRICE[k]; h+=`<button class="cmd srow" ${pr>p.money||full?'disabled':''} onclick="sendAct({type:'buycard',k:'${k}'})"><span>${CARDS[k].name}<small>${CARDS[k].desc}</small></span><span class="yen">${yen(pr)}</span></button>`; });
+  else if(!p.cards.length) h+='<p class="wait">売れるカードを持っていません</p>';
+  else p.cards.forEach((c,i)=>{ const v=sellPrice(c.k), dv=v<0;
+    h+=`<button class="cmd srow" ${dv&&p.money<-v?'disabled':''} onclick="sendAct({type:'sellcard',i:${i}})"><span>${CARDS[c.k].name}${CARDS[c.k].shuyu&&c.u?`<em>（${c.u}回使用）</em>`:''}<small>${dv?'引き取り料を払って処分します':CARDS[c.k].desc}</small></span><span class="${dv?'neg':'yen'}">${dv?'−'+yen(-v):'+'+yen(v)}</span></button>`; });
+  h+=`</div><button class="cmd back" onclick="sendAct({type:'endshop'})">お店を出る</button>`;
+  $('#buyWin').innerHTML=h;
+}
+function renderBet(s){
+  const p=s.players[s.cur];
+  let h=`<div class="bh"><span class="bt">🎲 ギャンブル駅</span><span>所持金 <b class="yen">${yen(p.money)}</b></span></div><p class="wait">賭けた金額は、当たれば2倍になって戻り、ハズレたら0になります。</p><div class="blist betlist">`;
+  BET_OPTIONS.forEach(a=>{ h+=`<button class="cmd" ${a>p.money?'disabled':''} onclick="sendAct({type:'bet',amt:${a}})">${yen(a)} 賭ける</button>`; });
+  h+=`</div><button class="cmd back" onclick="sendAct({type:'nobet'})">賭けない</button>`;
+  $('#buyWin').innerHTML=h;
+}
+function effTags(p){
+  const t=[];
+  if(p.rest>0) t.push(`💤休み${p.rest}`);
+  if(p.gyuho>0) t.push(`🐄牛歩${p.gyuho}`);
+  if(p.jokou>0) t.push(`🚧徐行${p.jokou}`);
+  if(p.heli>0) t.push(`🚁ヘリ禁${p.heli}`);
+  if(p.fuuin>0) t.push(`🔒封印${p.fuuin}`);
+  const dv=(p.cards||[]).filter(c=>c.k==='devil').length; if(dv) t.push(`👿デビル${dv>1?dv:''}`);
+  return t.length?`<div class="eff">${t.map(x=>`<span>${x}</span>`).join('')}</div>`:'';
+}
+function zoomDest(){ const s=view.s; if(s&&s.dest&&s.phase!=='roulette'){ const st=ST[s.dest]; centerOn(st.x,st.y,Math.min(vb.w,1000)); } }
+function renderLobby(s){
+  const host=net.mode!=='client';
+  let info='';
+  if(net.mode==='host'){ const url=location.origin+location.pathname+'?room='+net.code; info=`<div class="room"><span>部屋コード</span><b>${net.code}</b><button class="btn sm" onclick="copyText('${url}')">招待リンクをコピー</button></div>`; }
+  else if(net.mode==='client') info=`<div class="room"><span>部屋コード</span><b>${esc(net.code)}</b></div>`;
+  else info='<p class="note">この端末を順番に回して遊びます。CPUを入れて1人でも遊べます。</p>';
+  $('#roomInfo').innerHTML=info;
+  $('#lobbyList').innerHTML=s.players.map((p,i)=>{ const mine=(p.owner===myToken&&!p.cpu)||(host&&p.cpu);
+    return `<li style="--pc:${p.color}">${trainIcon(p,'ti lt')}<span class="ln">${esc(p.name)}社長<small>${TRAIN_TYPES[trainOf(p).type].name}</small></span>${p.cpu?'<i>CPU</i>':''}${p.owner===myToken&&!p.cpu?'<i>この端末</i>':''}${mine?`<button class="btn sm tbtn" onclick="openTrainPick(${i})">列車をえらぶ</button>`:''}${host&&!(p.owner===myToken&&i===0&&!p.cpu)?`<button class="x" aria-label="外す" onclick="lobbyRemove(${i})">×</button>`:''}</li>`; }).join('')||'<li>まだ誰もいません</li>';
+  if(view.tpick!=null&&!$('#modal').hidden&&$('#modalBody .tpick')) renderTrainPick();
+  if(host){ $('#lobbyCtl').hidden=false; $('#lobbyWait').hidden=true; $('#yearsSel').value=String(s.years); $('#addHumanRow').hidden=net.mode!=='local'; $('#bStart').disabled=!s.players.length; $('#bAddCpu').disabled=s.players.length>=MAX_PLAYERS; $('#bAddHuman').disabled=s.players.length>=MAX_PLAYERS; }
+  else { $('#lobbyCtl').hidden=true; $('#lobbyWait').hidden=false; $('#lobbyWait').textContent=`${s.years}年プレイ。ホストが出発するのを待っています…`; }
+}
+function changeTrain(pid,t){
+  if(net.mode==='client'){ if(net.conn&&net.conn.open) net.conn.send({t:'train',pid,v:t}); }
+  else if(G&&setTrain(G,pid,t)) commit();
+}
+function openTrainPick(pid){ view.tpick=pid; openModal('<div class="tpick"></div>'); renderTrainPick(); }
+function renderTrainPick(){
+  const s=view.s, pid=view.tpick, p=s&&s.players[pid]; if(!p){ closeModal(); return; }
+  const t=trainOf(p), used=s.players.filter((q,j)=>j!==pid).map(q=>q.color);
+  let h=`<h3>${esc(p.name)}社長の列車</h3><div class="tprev">${trainIcon(p,'ti big')}</div><h4>形式</h4><div class="tgrid">`;
+  for(const k in TRAIN_TYPES) h+=`<button class="tchoice${t.type===k?' on':''}" onclick="changeTrain(${pid},{type:'${k}'})">${trainIcon(p,'ti',k)}<span>${TRAIN_TYPES[k].name}</span></button>`;
+  h+='</div><h4>車体の色</h4><div class="swatches">'+BODY_COLORS.map(c=>`<button class="sw${p.color===c?' on':''}" style="--c:${c}" ${used.includes(c)?'disabled title="他の社長が使用中"':''} aria-label="車体色" onclick="changeTrain(${pid},{color:'${c}'})"></button>`).join('')+'</div>';
+  h+='<h4>帯の色</h4><div class="swatches">'+BAND_COLORS.map(c=>`<button class="sw${t.band===c?' on':''}" style="--c:${c}" aria-label="帯色" onclick="changeTrain(${pid},{band:'${c}'})"></button>`).join('')+'</div><p class="note">車体の色は、その社長の色として地図やウィンドウでも使われます。</p>';
+  $('#modalBody .tpick').innerHTML=h;
+}
+function lobbyRemove(i){ if(!G||G.phase!=='lobby') return; G.players.splice(i,1); commit(); }
+function lobbyAddCpu(){ if(!G||G.players.length>=MAX_PLAYERS) return; const names=['ミナト','カイオウ','シモミナト','ホシカゲ','イカワ','スガウラ','ナノカ','ヒツキ']; addPlayer(G,names.find(x=>!G.players.some(p=>p.name===x))||'CPU','cpu',true); commit(); }
+function lobbyAddHuman(){ const el=$('#humanName'), n=el.value.trim(); if(!n||!G||G.players.length>=MAX_PLAYERS) return; addPlayer(G,n,myToken,false); el.value=''; commit(); }
+function lobbyStart(){ if(!G||!G.players.length) return; initGame(G); commit(); }
+function copyText(t){ (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>pushMsg('招待リンクをコピーしました','good')).catch(()=>prompt('このリンクを送ってください',t)); }
+
+/* ---------- ウィンドウ（モーダル） ---------- */
+function openModal(html){ $('#modalBody').innerHTML=html; $('#modal').hidden=false; $('#modalClose').focus(); }
+function closeModal(){ $('#modal').hidden=true; }
+function showStation(n){
+  const s=view.s, st=ST[n];
+  let h=`<h3>${esc(n)}駅</h3><p class="lines">${LINES_OF[n].map(l=>`<span style="--lc:${LINES.find(x=>x[0]===l)[1]}">${esc(l)}</span>`).join('')}</p>`;
+  if(st.type!=='prop') h+=`<p><span class="sqm t-${st.type}"></span>${TYPE_LABEL[st.type]}</p>`;
+  if(st.type==='shop') h+='<table class="tbl"><tr><th>カード</th><th>価格</th></tr>'+SHOPS[n].map(k=>`<tr><td>${CARDS[k].name}<br><small>${CARDS[k].desc}</small></td><td class="yen">${yen(CARD_PRICE[k])}</td></tr>`).join('')+'</table>';
+  else h+='<table class="tbl"><tr><th>物件名</th><th>価格</th><th>収益率</th><th>持ち主</th></tr>'+st.props.map((pr,k)=>{ const o=s.owners[n+'#'+k]; return `<tr><td>${gtag(pr.genre)}${esc(pr.name)}</td><td class="yen">${yen(pr.price)}</td><td>${pr.rate}%${gmulTag(s,pr.genre)}</td><td>${o!==undefined?`<span class="own" style="--pc:${s.players[o].color}">${esc(s.players[o].name)}</span>`:'—'}</td></tr>`; }).join('')+'</table>';
+  if(n===s.dest&&s.phase!=='roulette') h+='<p class="destnote">🚩 いまの目的地です</p>';
+  const vp=s.players[myPlayerIndex(s)];
+  h+=`<p class="note">${esc(vp.name)}社長の位置から あと${DIST[vp.pos][n]}駅</p>`;
+  openModal(h);
+}
+function showStats(){
+  const s=view.s;
+  openModal('<h3>社長情報</h3><table class="tbl"><tr><th>社長</th><th>所持金</th><th>総資産</th><th>物件</th><th>カード</th></tr>'+s.players.map((p,i)=>`<tr><td><span class="pc" style="--pc:${p.color}"></span>${esc(p.name)}${s.bonbi===i?tokumeiIcon(16):''}</td><td class="yen">${yen(p.money)}</td><td class="yen">${yen(assets(s,i))}</td><td>${ownedKeys(s,i).length}件</td><td>${p.cards.length}枚</td></tr>`).join('')+'</table>');
+}
+function showMyProps(){
+  const s=view.s, i=myPlayerIndex(s), p=s.players[i];
+  const keys=ownedKeys(s,i);
+  let h=`<h3>${esc(p.name)}社長の物件</h3>`;
+  if(!keys.length) h+='<p class="note">まだ物件を持っていません。四角い屋根の駅に止まると買えます。</p>';
+  else h+='<table class="tbl"><tr><th>駅</th><th>物件名</th><th>価格</th><th>収益率</th></tr>'+keys.map(k=>{ const [st,idx]=k.split('#'), pr=ST[st].props[+idx]; return `<tr><td>${esc(st)}${isMono(s,st,i)?'👑':''}</td><td>${gtag(pr.genre)}${esc(pr.name)}</td><td class="yen">${yen(pr.price)}</td><td>${pr.rate}%${gmulTag(s,pr.genre)}</td></tr>`; }).join('')+`</table><p class="note">🌾農林物件は借金になっても売られません。今の決算見込み（ニュースの影響込み）：<span class="yen">${yen(income(s,i))}</span></p>`;
+  if(p.cards.length) h+='<h4>カード</h4><ul class="cardlist">'+p.cards.map(c=>`<li><b>${CARDS[c.k].name}${CARDS[c.k].shuyu&&c.u?`（${c.u}回使用）`:''}</b><small>${CARDS[c.k].desc}</small></li>`).join('')+'</ul>';
+  openModal(h);
+}
+function niceStep(r){ const p=Math.pow(10,Math.floor(Math.log10(Math.max(r,1)))); for(const m of [1,2,5,10]) if(m*p>=r) return m*p; return 10*p; }
+function yenShort(v){ if(v===0) return '0'; const a=Math.abs(v), sg=v<0?'−':''; if(a>=10000){ const o=a/10000; return sg+(o>=10?Math.round(o):Math.round(o*10)/10)+'億'; } return sg+a+'万'; }
+function assetChart(s){
+  const H=s.history||[]; if(H.length<2) return '';
+  const W=540,Ht=250,pl=58,pr=16,pt=14,pb=30, all=H.flatMap(h=>h.v);
+  let mn=Math.min(0,...all), mx=Math.max(100,...all);
+  const step=niceStep((mx-mn)/4); mn=Math.floor(mn/step)*step; mx=Math.ceil(mx/step)*step; if(mx===mn) mx=mn+step;
+  const X=i=>pl+(W-pl-pr)*i/(H.length-1), Y=v=>pt+(Ht-pt-pb)*(1-(v-mn)/(mx-mn));
+  let g=`<svg class="chart" viewBox="0 0 ${W} ${Ht}" role="img" aria-label="総資産の推移グラフ"><rect width="${W}" height="${Ht}" rx="10" fill="#fff"/>`;
+  for(let v=mn;v<=mx+0.001;v+=step){ g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v===0?'#8a92a6':'#e3e7ef'}" stroke-width="${v===0?2:1}"/><text x="${pl-6}" y="${Y(v)+4}" text-anchor="end" class="ax">${yenShort(v)}</text>`; }
+  H.forEach((h,i)=>{ g+=`<text x="${X(i)}" y="${Ht-10}" text-anchor="middle" class="ax">${esc(h.label)}</text>`; });
+  s.players.forEach((p,j)=>{
+    const pts=H.map((h,i)=>`${X(i)},${Y(h.v[j])}`).join(' ');
+    g+=`<polyline points="${pts}" fill="none" stroke="${p.color}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>`;
+    H.forEach((h,i)=>{ g+=`<circle cx="${X(i)}" cy="${Y(h.v[j])}" r="${i===H.length-1?6:4}" fill="${p.color}" stroke="#fff" stroke-width="2"/>`; });
+  });
+  g+='</svg>';
+  const legend='<div class="legend2">'+s.players.map(p=>`<span><i style="background:${p.color}"></i>${esc(p.name)}</span>`).join('')+'</div>';
+  return `<div class="chartbox"><div class="ctitle">総資産の推移</div>${g}${legend}</div>`;
+}
+function gtag(g){ const G=GENRES[g]; return G?`<span class="gt" style="--gc:${G.color}">${G.icon}${G.name}</span>`:''; }
+function gmulTag(s,g){ const m=s.gmul&&s.gmul[g]; if(!m||m===1) return ''; return `<span class="gm ${m>1?'up':'dn'}">今年×${m}</span>`; }
+function newsList(list){ return list&&list.length?'<ul class="newslist">'+list.map(n=>`<li class="${n.good?'up':'dn'}"><span class="nm">${n.month}月</span>${gtag(n.g)}${esc(n.text)}</li>`).join('')+'</ul>':'<p class="note">今年はまだニュースがありません。</p>'; }
+function showNews(){
+  const s=view.s; if(!s||!s.gmul) return;
+  const mul=GENRE_KEYS.map(g=>`<li>${gtag(g)}<b class="${s.gmul[g]>1?'up':s.gmul[g]<1?'dn':''}">×${s.gmul[g]}</b></li>`).join('');
+  openModal(`<h3>📰 川島ニュース</h3><p class="note">月の始めにときどき起こります。倍率は今年の決算までジャンルの物件収益にかかります。</p><ul class="gmuls">${mul}</ul><h4>今年のニュース</h4>${newsList(s.news)}`);
+}
+async function newsFlash(l){
+  const el=$('#evflash'), m=l.text.match(/【(.*?)】(.*)$/);
+  el.innerHTML=`<div class="win evbox news"><div class="evicon">📰</div><div><div class="evtitle">川島ニュース</div><div class="ng">${m?esc(m[1]):''}</div><p>${esc(m?m[2]:l.text)}</p></div></div>`;
+  el.hidden=false; SND.news(); await sleep(RM?1000:2600); el.hidden=true;
+}
+function showSettle(ls){
+  const s=view.s, H=s.history||[], prev=H.length>=2?H[H.length-2].v:null;
+  const rows=ls.rows.map((r,i)=>{ const d=prev?r.assets-prev[i]:0; return `<tr><td><span class="pc" style="--pc:${r.color}"></span>${esc(r.name)}</td><td class="yen">+${yen(r.income)}</td><td class="yen">${yen(r.assets)}</td><td class="${d<0?'dn':'up'}">${d<0?'▼':'▲'}${yen(Math.abs(d))}</td></tr>`; }).join('');
+  openModal(`<h3 class="settle">${ls.year}年目　決算</h3>${assetChart(s)}<table class="tbl"><tr><th>社長</th><th>物件収益</th><th>総資産</th><th>前年から</th></tr>${rows}</table><p class="note">独占している駅の物件は収益が2倍です。</p>${ls.news&&ls.news.length?'<h4>今年のニュース</h4>'+newsList(ls.news):''}`);
+}
+function showResult(s){
+  openModal(`<h3 class="settle">最終結果</h3>${assetChart(s)}<ol class="rank">${s.result.map((r,i)=>`<li style="--pc:${r.color}"><span class="no">${i+1}位</span><b>${esc(r.name)}社長</b><span class="yen">${yen(r.assets)}</span><small>現金 ${yen(r.money)}　物件${r.props}件</small></li>`).join('')}</ol><button class="cmd back" onclick="location.href=location.pathname">タイトルにもどる</button>`);
+}
+function showLog(){ const s=view.s; if(!s) return; openModal('<h3>できごと</h3><ul class="loglist">'+s.log.slice().reverse().map(l=>`<li class="k-${l.kind}">${esc(l.text)}</li>`).join('')+'</ul>'); }
+function setStatus(t){ $('#status').textContent=t; }
+function showErr(t){ setStatus(''); openModal(`<h3>おしらせ</h3><p>${esc(t)}</p><button class="cmd back" onclick="location.href=location.pathname">タイトルにもどる</button>`); }
+
+/* ---------- 起動 ---------- */
+buildMap();
+(function init(){
+  const nm=$('#nm'); nm.value=sget('localStorage','kt-name')||'';
+  const q=new URLSearchParams(location.search).get('room'); if(q) $('#code').value=q;
+  const takeName=()=>{ myName=(nm.value.trim()||'しゃちょう').slice(0,8); sset('localStorage','kt-name',myName); };
+  const okNew=()=>!loadSave()||confirm('セーブデータがあります。新しいゲームを始めると、出発した時点でセーブが上書きされます。よろしいですか？');
+  $('#bLocal').onclick=()=>{ if(!okNew()) return; takeName(); startLocal(); };
+  $('#bHost').onclick=()=>{ if(!okNew()) return; takeName(); startHost(); };
+  $('#bJoin').onclick=()=>{ takeName(); sset('localStorage','kt-lastroom',$('#code').value.trim().toUpperCase()); startClient($('#code').value); };
+  if(!q){ const lr=sget('localStorage','kt-lastroom'); if(lr) $('#code').value=lr; }
+  const sv=loadSave();
+  if(sv){
+    const g=sv.G, d=new Date(sv.savedAt);
+    $('#bResume').hidden=false;
+    $('#bResume').innerHTML=`続きから遊ぶ<small>${sv.mode==='host'?'オンライン（部屋を作り直します）':'この端末'}・${g.year}年目${g.month}月・${g.players.map(p=>esc(p.name)).join('、')}・${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}保存</small>`;
+    $('#bResume').onclick=()=>{ takeName(); resumeGame(); };
+  }
+  $('#chatPal').innerHTML='<div class="cph">チャット</div><div class="cpg">'+CHAT.map((t,i)=>`<button class="chatb" onclick="sendChat(${i})">${esc(t)}</button>`).join('')+'</div>';
+  $('#zChat').onclick=openChatPal; $('#lChat').onclick=openChatPal;
+  $('#yearsSel').onchange=e=>{ if(G&&G.phase==='lobby'){ G.years=+e.target.value; commit(); } };
+  $('#bAddCpu').onclick=lobbyAddCpu; $('#bAddHuman').onclick=lobbyAddHuman; $('#bStart').onclick=lobbyStart;
+  $('#rStop').onclick=()=>{ if(view.stopKey===roul.key) return; view.stopKey=roul.key; $('#rStop').hidden=true; sendAct({type:'stop'}); };
+  $('#modalClose').onclick=closeModal; $('#modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal(); });
+  $('#msgWin').onclick=()=>{ /* 次のメッセージへ */ };
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){ closeModal(); closeChatPal(); return; }
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      const scope=!$('#modal').hidden?$('#modal'):!$('#buyWin').hidden?$('#buyWin'):$('#cmdWin');
+      const list=[...scope.querySelectorAll('.cmd:not([disabled])')]; if(!list.length) return;
+      const i=list.indexOf(document.activeElement);
+      list[(i+(e.key==='ArrowDown'?1:-1)+list.length)%list.length].focus(); e.preventDefault();
+    }
+  });
+  $('#zIn').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,1/1.3);
+  $('#zOut').onclick=()=>zoomAt(vb.x+vb.w/2,vb.y+vb.h/2,1.3);
+  $('#zSnd').textContent=SND_ON?'🔊':'🔇';
+  $('#zSnd').onclick=()=>{ SND_ON=!SND_ON; sset('localStorage','kt-sound',SND_ON?'on':'off'); $('#zSnd').textContent=SND_ON?'🔊':'🔇'; if(SND_ON) SND.click(); };
+  document.addEventListener('click',e=>{ audio(); if(e.target.closest&&e.target.closest('.cmd:not([disabled]),.btn,.tab')) SND.click(); },true);
+  $('#zMe').onclick=()=>{ const s=view.s; if(s&&s.players){ const st=ST[s.players[myPlayerIndex(s)].pos]; centerOn(st.x,st.y,Math.min(vb.w,900)); } };
+  window.addEventListener('beforeunload',e=>{ if(net.mode==='host'&&G&&G.phase!=='lobby'&&G.phase!=='end'){ e.preventDefault(); e.returnValue=''; } });
+  if(innerWidth<820){ vb={x:100,y:650,w:1000,h:1000}; applyVB(); }
+})();
+
+</script>
+</body>
+</html>
