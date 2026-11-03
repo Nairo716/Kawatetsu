@@ -260,6 +260,12 @@ details ul{padding-left:1.2em;margin:.4em 0}
 .sw{width:34px;height:34px;border-radius:50%;background:var(--c);border:3px solid #fff;box-shadow:0 2px 0 #0a1a55}
 .sw.on{outline:3px solid var(--gold);outline-offset:2px}
 .sw[disabled]{opacity:.25;cursor:not-allowed}
+#map .arw{cursor:pointer;animation:arwp .7s ease-in-out infinite alternate}
+@keyframes arwp{to{opacity:.75}}
+.ag{display:inline-block;width:1.4em;color:var(--gold);font-size:20px}
+#cmdWin .ch .big{font-size:24px}
+#cmdWin .ch.sub2{margin-top:6px;border-top:2px dashed rgba(255,255,255,.4);border-bottom:0;padding-top:8px}
+#cmdWin .ch small{display:block;font-size:11px;font-weight:500;opacity:.85}
 .betlist{display:grid;grid-template-columns:1fr 1fr;gap:2px}
 .ban-in{padding:12px 34px;font-size:clamp(22px,6vw,34px);border-left:14px solid var(--pc);animation:slide .35s ease-out}
 .ban-in .pc{display:none}
@@ -469,9 +475,9 @@ const STATIONS = [
 ['常田',902,641],['尚狭川',902,674],['梶ヶ丘',902,708],['梶平サーキット前',864,755],['宇嘉台',837,755],['尾賀公園',786,755],['余木',732,776],['金が山',732,801,'city1'],['神谷町',732,871],['浅賀台',732,946],['御影橋',732,1004],['小坂',732,1039],['北倉竹',738,1056,'city2'],
 ['西瀬川北口',781,945],['浅賀',752,955],['桜小坂御影口',744,976],['南小坂',744,1039],
 ['芦野',899,945],['加奈町',939,945],['浜沢町',988,945],['川瀬町',1055,945],['薬師永良',1152,945],['八沢田',1152,912,'shop'],['南薬師',1152,986],['広江',1152,1081],['北糸里',1152,1138],
-['永久佐',1197,945],['稲生',1246,945],['兎野山',1301,945],['古野間',1354,945],['羽竜',1428,945,'rural1'],['保野',1531,945],
+['永久佐',1197,945],['稲生',1246,945],['兎野山',1301,945],['古野間',1354,945],['羽竜',1402,945,'rural1'],['保野',1531,945],
 ['今芳川',1615,850],['柚野町',1636,811],['川幡町',1658,772],['西七市',1677,739],
-['白能谷温泉',1452,795,'onsen1'],['麓間山',1452,824],['葉貫',1452,854],['麓野屋',1452,887],['能見市',1452,921],
+['白能谷温泉',1452,795,'onsen1'],['麓間山',1452,824],['葉貫',1452,854],['麓野屋',1452,887],['能見市',1452,945],
 ['菊能台',1402,985],['白雲南',1402,1012],['文禅寺',1402,1044],['北海王',1402,1080],['平山',1402,1139],
 ['隈川',1929,853],['吾妻三条',1929,906],['柏町',1929,960],['松任',1929,1009],['櫨屋敷',1929,1057],['九蘭野',1929,1107],
 ['東島栄町',2096,866],['芝向',2096,960],['本広岡',2096,1055],['桜地',2096,1163,'city2'],
@@ -535,9 +541,9 @@ const LINES = [
 ['東島緩行線','#8b8f3c',['七日市',[1822,715],[1845,729],'緑福町','京日大前','南坂','東島']],
 ['九蘭線','#7a2350',['七日市',[1912,690],[1929,712],'隈川','吾妻三条','柏町','松任','櫨屋敷','九蘭野',[1929,1145],[1950,1163],'桜地']],
 ['東島線','#45c1d6',['東島','東島栄町','芝向','本広岡','桜地',[2096,1255],[2116,1275],'東桜地','高見浜']],
-['川島線','#7a2350',['七日市',[1715,694],[1695,712],'西七市','川幡町','柚野町','今芳川',[1565,935],[1545,945],'保野','羽竜','古野間','兎野山','稲生','永久佐','薬師永良','川瀬町','浜沢町','加奈町','芦野','西瀬川北口',[760,945],'浅賀','桜小坂御影口','南小坂','北倉竹']],
-['山麓線','#8a2a5c',['白能谷温泉','麓間山','葉貫','麓野屋','能見市',[1452,935],[1440,945],'羽竜']],
-['海竜線','#f06b7a',['羽竜',[1402,955],'菊能台','白雲南','文禅寺','北海王','平山','海王']],
+['川島線','#7a2350',['七日市',[1715,694],[1695,712],'西七市','川幡町','柚野町','今芳川',[1565,935],[1545,945],'保野','能見市','羽竜','古野間','兎野山','稲生','永久佐','薬師永良','川瀬町','浜沢町','加奈町','芦野','西瀬川北口',[760,945],'浅賀','桜小坂御影口','南小坂','北倉竹']],
+['山麓線','#8a2a5c',['白能谷温泉','麓間山','葉貫','麓野屋','能見市']],
+['海竜線','#f06b7a',['羽竜','菊能台','白雲南','文禅寺','北海王','平山','海王']],
 ['糸里線','#6d1f45',['原石町',[1135,882],[1152,897],'八沢田','薬師永良','南薬師','広江','北糸里','糸里','糸里港']],
 ['千波線','#3fae8a',['井川湯元','千波湖','日生川口','和賀岸','千波岩原',[1144,862],[1125,879],'原石町','鹿木','さつきが丘',[840,879],[824,895],'小郷','新倉竹','篝火島','板橋',[826,1180],[810,1196],'倉竹','奥重','中上川','川島']],
 ['大神湖線','#1e3a8a',['大神湖','常田','尚狭川','梶ヶ丘',[902,740],[885,755],'梶平サーキット前','宇嘉台','尾賀公園',[748,755],[732,770],'余木','金が山','神谷町','浅賀台','御影橋','小坂','北倉竹',[735,1205],[718,1225],'新奥重',[480,1225],'川島']],
@@ -641,6 +647,7 @@ const EXTRA = {
   '七日市':[['七日市化学工場',9000,4]],
   '海王':[['海王製油所',12000,4]],
   '須賀浦':[['須賀浦製紙工場',6000,5]],
+  '東ノ町':[['暗部本部',10000,5]],
 };
 // 物件ジャンル（名前から自動で決める）
 const GENRES = {
@@ -704,7 +711,7 @@ NAMES.forEach(n=>{
   } else if(s.k){
     s.type='prop';
     const sp=SPECIAL[n];
-    s.props=(sp||TEMPL[s.k]).concat(EXTRA[n]||[]).map(([nm,p,r])=>{ const name=sp?nm:n+nm; return {name,price:p,rate:r,genre:genreOf(name)}; });
+    s.props=(sp||TEMPL[s.k]).map(([nm,p,r])=>[sp?nm:n+nm,p,r]).concat(EXTRA[n]||[]).map(([name,p,r])=>({name,price:p,rate:r,genre:genreOf(name)}));
   } else {
     const h=strHash(n)%100;
     s.type = h<46 ? 'blue' : h<80 ? 'red' : 'card';
@@ -792,7 +799,7 @@ function pickDest(s,exclude){
 }
 
 /* ----- 移動候補 ----- */
-function moveOptions(start,steps,dest){
+function moveOptions(start,steps,dest,prev0){
   const res={}, seen=new Set(), path=[start];
   (function dfs(node,prev,rem){
     const key=node+'|'+prev+'|'+rem;
@@ -801,8 +808,23 @@ function moveOptions(start,steps,dest){
     if(rem===0){ if(!res[node]) res[node]=path.slice(); return; }
     let nb=ADJ[node].filter(n=>n!==prev); if(!nb.length) nb=ADJ[node];
     for(const n of nb){ path.push(n); dfs(n,node,rem-1); path.pop(); }
-  })(start,null,steps);
+  })(start,prev0===undefined?null:prev0,steps);
   return res;
+}
+// 1駅ずつ進むときの「行けるかな？」：今いる駅から、残りの目で止まれる駅と、そこまでの道（出発駅から）
+function walkOptions(s){
+  const w=s.walk, cur=w.path[w.path.length-1], prev=w.path.length>1?w.path[w.path.length-2]:null;
+  const res={};
+  if(w.left<=0){ res[cur]=w.path.slice(); return res; }
+  const o=moveOptions(cur,w.left,s.dest,prev);
+  for(const n in o) res[n]=w.path.concat(o[n].slice(1));
+  return res;
+}
+function stepChoices(s){
+  const w=s.walk; if(!w||w.left<=0) return [];
+  const cur=w.path[w.path.length-1], prev=w.path.length>1?w.path[w.path.length-2]:null;
+  let nb=ADJ[cur].filter(n=>n!==prev); if(!nb.length) nb=ADJ[cur]; // 行き止まりは折り返し
+  return nb;
 }
 
 /* ----- ルール ----- */
@@ -819,7 +841,21 @@ function applyAction(s,a,token){
     case 'card': if(s.phase!=='turn') return false; return useCard(s,a.i|0);
     case 'choose': if(s.phase!=='choose') return false; return doChoose(s,a.v);
     case 'cancel': if(s.phase!=='choose') return false; s.phase='turn'; s.choose=null; return true;
-    case 'go': if(s.phase!=='move'||!s.opts||!s.opts[a.node]) return false; doMove(s,s.opts[a.node],false); return true;
+    case 'go': if(s.phase!=='move'||!s.opts||!s.opts[a.node]) return false; doMove(s,s.opts[a.node],false,s.walk?s.walk.path.length-1:0); return true;
+    case 'step': {
+      if(s.phase!=='move'||!s.walk||!stepChoices(s).includes(a.to)) return false;
+      const w=s.walk; w.path.push(a.to); w.left--; s.stepSeq=++s.seq;
+      if(a.to===s.dest){ doMove(s,w.path.slice(),false,w.path.length-1); return true; }
+      s.opts=walkOptions(s); return true;
+    }
+    case 'undo': {
+      if(s.phase!=='move'||!s.walk||s.walk.path.length<2) return false;
+      s.walk.path.pop(); s.walk.left++; s.stepSeq=++s.seq; s.opts=walkOptions(s); return true;
+    }
+    case 'stophere': {
+      if(s.phase!=='move'||!s.walk||s.walk.left!==0) return false;
+      doMove(s,s.walk.path.slice(),false,s.walk.path.length-1); return true;
+    }
     case 'buy': if(s.phase!=='buy') return false; return buyProp(s,a.i|0);
     case 'endbuy': if(s.phase!=='buy') return false; finishTurn(s); return true;
     case 'bet': if(s.phase!=='bet') return false; return doBet(s,a.amt|0);
@@ -845,7 +881,8 @@ function startDice(s,n){
 function setRoll(s,dice){
   const p=s.players[s.cur], total=dice.reduce((a,b)=>a+b,0);
   s.roll={seq:++s.seq,dice,pid:s.cur};
-  s.opts=moveOptions(p.pos,total,s.dest);
+  s.walk={path:[p.pos],left:total,total};
+  s.opts=walkOptions(s);
   s.phase='move';
   addLog(s,`${p.name}社長、サイコロは ${total}`,'info');
   HOOK_DELAY+=1500;
@@ -859,10 +896,12 @@ function doRoll(s,n){
   }
   setRoll(s,Array.from({length:n},()=>rnd(1,6)));
 }
-function doMove(s,path,warp){
+function doMove(s,path,warp,animFrom){
   const p=s.players[s.cur];
-  s.move={seq:++s.seq,path,pid:s.cur,warp:!!warp};
-  HOOK_DELAY+=warp?900:path.length*170+500;
+  animFrom=animFrom||0;
+  s.move={seq:++s.seq,path,pid:s.cur,warp:!!warp,from:animFrom};
+  s.walk=null;
+  HOOK_DELAY+=warp?900:(path.length-animFrom)*170+500;
   if(!warp && s.bonbi===s.cur){
     for(const n of path.slice(1)){
       const j=s.players.findIndex((q,jj)=>jj!==s.cur && q.pos===n);
@@ -1315,7 +1354,7 @@ function cpuDecide(s){
   return null;
 }
 
-if(typeof module!=='undefined') module.exports={setTrain,GENRES,genreOf,ST,ADJ,NAMES,DIST,LINES,PROP_STATIONS,CARDS,newLobby,addPlayer,initGame,applyAction,cpuDecide,assets,yen,moveOptions,giveCard,cardBlock,useCard};
+if(typeof module!=='undefined') module.exports={walkOptions,stepChoices,setTrain,GENRES,genreOf,ST,ADJ,NAMES,DIST,LINES,PROP_STATIONS,CARDS,newLobby,addPlayer,initGame,applyAction,cpuDecide,assets,yen,moveOptions,giveCard,cardBlock,useCard};
 
 /* ===== 川鉄すごろく：画面・通信（桃鉄風UI） ===== */
 const $=s=>document.querySelector(s);
@@ -1472,7 +1511,7 @@ function showChat(m){
 }
 
 /* ---------- 受信と演出キュー ---------- */
-const view={s:null,roll:0,move:0,log:0,settle:0,turn:0,rr:0,anim:null,busy:false,resultShown:false,menu:'main',stopKey:null,sr:0,chatB:{},facing:{}};
+const view={s:null,roll:0,move:0,log:0,settle:0,turn:0,rr:0,anim:null,busy:false,resultShown:false,menu:'main',stopKey:null,sr:0,chatB:{},facing:{},step:0};
 const queue=[];
 function receive(s){ queue.push(s); pump(); }
 async function pump(){
@@ -1485,6 +1524,14 @@ async function pump(){
     if(s.log.length) view.log=s.log[s.log.length-1].seq;
     if(s.phase!=='lobby'){
       if(s.roll&&s.roll.seq>view.roll){ view.roll=s.roll.seq; if(live) await diceStop(s.roll.dice,s.players[s.roll.pid]); if(s.opts) fitNodes([s.players[s.roll.pid].pos,...Object.keys(s.opts)]); }
+      if(s.stepSeq&&s.stepSeq>view.step){
+        const pw=prev&&prev.walk, nw=s.walk||(s.move&&s.move.seq>view.move?{path:s.move.path}:null);
+        view.step=s.stepSeq;
+        if(live&&pw&&nw&&prev.roll&&s.roll&&prev.roll.seq===s.roll.seq){
+          const a=pw.path[pw.path.length-1], b=nw.path[nw.path.length-1];
+          if(a!==b) await stepAnim(s.cur,a,b);
+        }
+      }
       if(s.move&&s.move.seq>view.move){ view.move=s.move.seq; if(live) await moveAnim(s.move,s.players[s.move.pid]); }
       const arr=newLogs.find(l=>l.kind==='arrive');
       if(arr&&live&&s.phase!=='end') await arriveFlash(s.players[s.roulette?s.roulette.by:s.cur], prev.dest);
@@ -1519,6 +1566,11 @@ const svg=$('#map');
 let vb={x:-40,y:-10,w:2440,h:1600};
 function applyVB(){ svg.setAttribute('viewBox',`${vb.x} ${vb.y} ${vb.w} ${vb.h}`); }
 function linePts(raw){ return raw.map(n=>typeof n==='string'?[ST[n].x,ST[n].y]:n); }
+// 隣り合う駅の間の線路の形（カーブ込み）
+const EDGE={};
+LINES.forEach(([ln,c,raw])=>{ let last=-1; raw.forEach((n,i)=>{ if(typeof n!=='string') return; if(last>=0){ const seg=linePts(raw.slice(last,i+1)); const a=raw[last]; if(!EDGE[a+'|'+n]){ EDGE[a+'|'+n]=seg; EDGE[n+'|'+a]=seg.slice().reverse(); } } last=i; }); });
+function edgePts(a,b){ return EDGE[a+'|'+b]||[[ST[a].x,ST[a].y],[ST[b].x,ST[b].y]]; }
+function walkPos(s,i){ const p=s.players[i]; return (s.phase==='move'&&s.walk&&i===s.cur)?s.walk.path[s.walk.path.length-1]:p.pos; }
 // ---- 駅名ラベルの自動配置（線路・他の駅名・駅マークと重ならない位置を選ぶ） ----
 function segHitsBox(x1,y1,x2,y2,b){
   // Liang–Barsky で線分と矩形の交差を判定
@@ -1618,9 +1670,20 @@ function renderDyn(){
   }
   if(s.phase==='move'&&s.opts&&!view.anim){
     const mine=canAct(s);
+    // 行けるかな？（残りの目で止まれる駅）
     for(const n in s.opts){ const st=ST[n]; o+=`<rect class="opt${mine?' mine':''}" x="${st.x-15}" y="${st.y-15}" width="30" height="30" rx="7" fill="rgba(255,225,77,.35)" stroke="#ffcc00" stroke-width="4"/>`; }
+    // 1駅ずつ進む矢印
+    if(mine&&s.walk&&s.walk.left>0){
+      const cur=s.walk.path[s.walk.path.length-1], c=ST[cur];
+      stepChoices(s).forEach(n=>{
+        const P=edgePts(cur,n), q=P[1], dx=q[0]-c.x, dy=q[1]-c.y, L=Math.hypot(dx,dy)||1, ux=dx/L, uy=dy/L, ang=Math.atan2(dy,dx)*180/Math.PI;
+        const x=c.x+ux*42, y=c.y+uy*42;
+        o+=`<g class="arw" data-step="${esc(n)}" transform="translate(${x} ${y}) rotate(${ang})"><circle r="17" fill="#ff7a00" stroke="#fff" stroke-width="3.5"/><path d="M-6 -9 L8 0 L-6 9 Z" fill="#fff"/><circle r="24" fill="transparent"/></g>`;
+      });
+    }
   }
   $('#dyn').innerHTML=o; renderTokens();
+  if(!view.anim||!view.busy){ const sw=$('#stepWin'), on=s.phase==='move'&&!!s.walk; if(on){ sw.hidden=false; sw.style.setProperty('--pc',s.players[s.cur].color); $('#stepN').textContent=s.walk.left; } else if(!view.busy) sw.hidden=true; }
 }
 /* ---- 列車の絵（右向き、原点が車体の中心、車輪の下端がy=14） ---- */
 function trainShape(type,body,band){
@@ -1651,7 +1714,7 @@ function trainSvg(p,x,y,cur,bonbi,pid,noName){
 function renderTokens(){
   const s=view.s; if(!s||s.phase==='lobby') return;
   const groups={};
-  s.players.forEach((p,i)=>{ if(view.anim&&view.anim.pid===i) return; (groups[p.pos]=groups[p.pos]||[]).push(i); });
+  s.players.forEach((p,i)=>{ if(view.anim&&view.anim.pid===i) return; const ps=walkPos(s,i); (groups[ps]=groups[ps]||[]).push(i); });
   const OFF=[[0,0],[26,-18],[-26,-18],[26,18],[-26,18],[0,-34],[0,34],[46,0]];
   let o='';
   for(const n in groups){ const st=ST[n]; const gs=groups[n], cnt=gs.length;
@@ -1695,7 +1758,7 @@ function fitAll(){ vb={x:-40,y:-10,w:2440,h:1600}; applyVB(); }
     pts.set(e.pointerId,cur);
     if(pts.size===2&&pinch){ const [a,b]=[...pts.values()], d=Math.hypot(a.x-b.x,a.y-b.y), m=toSvg((a.x+b.x)/2,(a.y+b.y)/2); zoomAt(m.x,m.y,pinch.d/d); pinch.d=d; }
   });
-  const up=e=>{ if(!pts.has(e.pointerId)) return; pts.delete(e.pointerId); if(pts.size<2) pinch=null; if(pts.size===0&&moved<8&&downTarget){ const g=downTarget.closest&&downTarget.closest('[data-st]'); if(g) tapStation(g.getAttribute('data-st')); } if(pts.size===0) downTarget=null; };
+  const up=e=>{ if(!pts.has(e.pointerId)) return; pts.delete(e.pointerId); if(pts.size<2) pinch=null; if(pts.size===0&&moved<8&&downTarget){ const ar=downTarget.closest&&downTarget.closest('[data-step]'); if(ar){ stepTo(ar.getAttribute('data-step')); } else { const g=downTarget.closest&&downTarget.closest('[data-st]'); if(g) tapStation(g.getAttribute('data-st')); } } if(pts.size===0) downTarget=null; };
   svg.addEventListener('pointerup',up); svg.addEventListener('pointercancel',up);
   svg.addEventListener('wheel',e=>{ e.preventDefault(); const m=toSvg(e.clientX,e.clientY); zoomAt(m.x,m.y,e.deltaY>0?1.15:1/1.15); },{passive:false});
 })();
@@ -1789,9 +1852,27 @@ async function diceStop(dice,p){
   await sleep(RM?500:1000);
   el.hidden=true; dz.spinning=false;
 }
+function stepAnim(pid,a,b){
+  return new Promise(res=>{
+    const P=edgePts(a,b); const Ls=[0]; for(let i=1;i<P.length;i++) Ls.push(Ls[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));
+    const tot=Ls[Ls.length-1]||1, dur=RM?40:170; let t0=null; SND.step();
+    function frame(ts){
+      if(t0===null) t0=ts;
+      const u=Math.min(1,(ts-t0)/dur), d=u*tot;
+      let i=1; while(i<P.length-1&&Ls[i]<d) i++;
+      const f=(d-Ls[i-1])/((Ls[i]-Ls[i-1])||1), x=P[i-1][0]+(P[i][0]-P[i-1][0])*f, y=P[i-1][1]+(P[i][1]-P[i-1][1])*f;
+      if(Math.abs(P[i][0]-P[i-1][0])>2) view.facing[pid]=P[i][0]<P[i-1][0]?-1:1;
+      view.anim={pid,x,y}; renderTokens();
+      if(u<1) requestAnimationFrame(frame); else { view.anim=null; ensureVisible(b); res(); }
+    }
+    requestAnimationFrame(frame);
+  });
+}
+function stepTo(n){ const s=view.s; if(!s||s.phase!=='move'||!canAct(s)||view.busy||!s.walk) return; if(stepChoices(s).includes(n)) sendAct({type:'step',to:n}); }
+function arrowGlyph(dx,dy){ const a=(Math.atan2(dy,dx)*180/Math.PI+360)%360; return ['→','↘','↓','↙','←','↖','↑','↗'][Math.round(a/45)%8]; }
 function moveAnim(m,p){
   return new Promise(res=>{
-    const path=m.path; if(path.length<2){ res(); return; }
+    const path=m.path.slice(m.from||0); if(path.length<2){ res(); return; }
     ensureVisible(path[0]);
     const step=m.warp?(RM?200:800):(RM?40:200);
     const pts=path.map(n=>ST[n]); let t0=null;
@@ -1924,7 +2005,16 @@ function renderCmd(){
       h=`<div class="ch"><span class="pc" style="--pc:${p.color}"></span>${esc(p.name)}社長、どうする？</div>`+cmdBtn('サイコロ',"sendAct({type:'roll'})",{cls:'main'})+cmdBtn(`カード（${p.cards.length}枚）`,"view.menu='cards';renderCmd()",{dis:!p.cards.length})+infoCmds;
     }
   } else if(s.phase==='move'){
-    h=`<div class="ch">どの駅に止まる？</div><p class="wait">光っている駅をタップしてもOK</p><div class="optlist">`;
+    const w=s.walk;
+    if(w){
+      const cur=w.path[w.path.length-1], c=ST[cur];
+      h=`<div class="ch">のこり <b class="yen big">${w.left}</b> 駅　いま：${esc(cur)}</div>`;
+      if(w.left>0){
+        h+=stepChoices(s).map(n=>{ const q=edgePts(cur,n)[1]; return cmdBtn(`<span class="ag">${arrowGlyph(q[0]-c.x,q[1]-c.y)}</span>${esc(n)}へ`,`stepTo('${esc(n)}')`,{sub:n===s.dest?'🚩 目的地！':`目的地まで${DIST[n][s.dest]}駅`,cls:n===s.dest?'destcmd':''}); }).join('');
+      } else h+=cmdBtn('ここに止まる',"sendAct({type:'stophere'})",{cls:'main',sub:`${esc(cur)}駅（${TYPE_LABEL[ST[cur].type]||''}）`});
+      if(w.path.length>1) h+=cmdBtn('ひとつ戻る',"sendAct({type:'undo'})",{cls:'back',sub:'戻ると目が1つ戻ります'});
+      h+=`<div class="ch sub2">行けるかな？<small>光っている駅をタップすると自動で進みます</small></div><div class="optlist">`;
+    } else h=`<div class="ch">どの駅に止まる？</div><p class="wait">光っている駅をタップしてもOK</p><div class="optlist">`;
     Object.keys(s.opts).sort((a,b)=>DIST[a][s.dest]-DIST[b][s.dest]).forEach(n=>{
       const t=ST[n].type, isD=n===s.dest;
       h+=cmdBtn(`<span class="sqm t-${t}"></span>${esc(n)}`,`sendAct({type:'go',node:'${esc(n)}'})`,{sub:isD?'🚩 目的地！':`目的地まで${DIST[n][s.dest]}駅`,cls:isD?'destcmd':''});
@@ -2118,6 +2208,17 @@ buildMap();
   $('#msgWin').onclick=()=>{ /* 次のメッセージへ */ };
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'){ closeModal(); closeChatPal(); return; }
+    const s=view.s;
+    if(s&&s.phase==='move'&&s.walk&&canAct(s)&&!view.busy&&$('#modal').hidden&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Backspace','Enter'].includes(e.key)){
+      const w=s.walk;
+      if(e.key==='Backspace'){ if(w.path.length>1) sendAct({type:'undo'}); e.preventDefault(); return; }
+      if(e.key==='Enter'){ if(w.left===0){ sendAct({type:'stophere'}); e.preventDefault(); } return; }
+      const k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key], cur=w.path[w.path.length-1], c=ST[cur];
+      let best=null, bd=0.35;
+      stepChoices(s).forEach(n=>{ const q=edgePts(cur,n)[1], dx=q[0]-c.x, dy=q[1]-c.y, L=Math.hypot(dx,dy)||1, d=(dx*k[0]+dy*k[1])/L; if(d>bd){ bd=d; best=n; } });
+      if(best) stepTo(best);
+      e.preventDefault(); return;
+    }
     if(e.key==='ArrowDown'||e.key==='ArrowUp'){
       const scope=!$('#modal').hidden?$('#modal'):!$('#buyWin').hidden?$('#buyWin'):$('#cmdWin');
       const list=[...scope.querySelectorAll('.cmd:not([disabled])')]; if(!list.length) return;
