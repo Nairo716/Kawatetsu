@@ -190,6 +190,9 @@ details ul{padding-left:1.2em;margin:.4em 0}
 .evicon{font-size:64px}
 .evbox.ginji{background:linear-gradient(#3a3a3a,#111)}
 .evbox.bonbi{background:linear-gradient(#6b4a8c,#2a1640)}
+.evbox.king{background:linear-gradient(#b8860b,#5a1010);border-color:#ffd43b}
+.evbox.king .evtitle{color:#ffe14d;font-size:26px}
+.evtk.kg{flex-basis:90px;height:146px}
 .bubble{display:inline-block;margin-top:6px;background:#fff;color:#1b2333;text-shadow:none;border-radius:14px;padding:6px 12px;font-size:17px;position:relative}
 .bubble::before{content:"";position:absolute;left:-10px;top:12px;border:7px solid transparent;border-right:10px solid #fff;border-left:0}
 .tkm{display:inline-block;vertical-align:-3px;margin-left:4px}
@@ -266,6 +269,12 @@ details ul{padding-left:1.2em;margin:.4em 0}
 #cmdWin .ch .big{font-size:24px}
 #cmdWin .ch.sub2{margin-top:6px;border-top:2px dashed rgba(255,255,255,.4);border-bottom:0;padding-top:8px}
 #cmdWin .ch small{display:block;font-size:11px;font-weight:500;opacity:.85}
+.vq{font-size:22px;margin:12px 10px 6px}
+.vlist{list-style:none;margin:0 10px 6px;padding:0;display:grid;gap:6px;font-size:15px;font-weight:500}
+.vlist li{background:rgba(0,0,0,.22);border-radius:8px;padding:6px 10px}
+.vlist b{color:var(--gold)}
+.bwarn{margin:4px 8px 6px;font-size:13px;font-weight:700;background:rgba(122,35,80,.75);border:2px solid #fff;border-radius:8px;padding:6px 8px;line-height:1.4}
+.newc{display:inline-block;background:#e5322d;border:2px solid #fff;border-radius:6px;font-size:11px;padding:0 5px;margin-right:6px;vertical-align:2px}
 .betlist{display:grid;grid-template-columns:1fr 1fr;gap:2px}
 .ban-in{padding:12px 34px;font-size:clamp(22px,6vw,34px);border-left:14px solid var(--pc);animation:slide .35s ease-out}
 .ban-in .pc{display:none}
@@ -367,6 +376,7 @@ details ul{padding-left:1.2em;margin:.4em 0}
           <li>自分の番にサイコロを振り、光った駅から止まる駅を選びます。</li>
           <li>🚩目的地に一番乗りするとボーナス。次の目的地もルーレットで決めます。いちばん遠い社長には貧乏神😈が取り憑きます。</li>
           <li>夏（6〜8月）は青マスの金額が2倍・赤マスが半分、冬（12〜2月）は青マスが半分・赤マスが2倍になります。</li>
+          <li>2年目の4月からは、トクメイがキングトクメイに進化することがあります（3〜6か月で元に戻ります）。</li>
           <li>最初の目的地に誰かが着くと、貧乏神トクメイが現れて目的地から一番遠い社長に取り憑きます。休みのターンでもトクメイは悪さをします。</li>
           <li>紫の「¥」の駅はギャンブル駅。10万〜1億円を賭けて、当たれば2倍、ハズレたら0です。</li>
           <li>ときどきスリの銀二が現れて、所持金の全額・半額・4分の1を盗んでいきます。</li>
@@ -374,12 +384,14 @@ details ul{padding-left:1.2em;margin:.4em 0}
           <li>🌾農林物件は、借金になっても売られずに守られます。</li>
           <li>緑の「店」の駅はカード売り場。駅ごとに違うカードを売っています。手持ちのカードは半額で売れ、デビルカードは引き取り料を払えば処分できます。</li>
           <li>ロビーの「列車をえらぶ」で、自分の列車の形式（通勤形・特急形・気動車・電気機関車・新幹線・路面電車・蒸気機関車）と色を選べます。</li>
+          <li>下港駅に止まると、ときどき「藍原旅客鉄道団結小屋に訪れますか？」と聞かれます。訪れると下港周辺10駅の物件収益がずっと1.2倍に、そのかわりみなおか急行（美奈丘本線）に2ターン乗れなくなります。</li>
           <li>オンライン対戦では💬ボタンから定型文チャットを送れます。</li>
           <li>ゲームは自動でセーブされます。タイトルの「続きから遊ぶ」で再開できます（オンラインは部屋を作り直し、他の人は入り直します）。</li>
+          <li>来た方向へは引き返せません。行き止まりに着いたら、目が残っていてもそこで止まります。</li>
           <li>サイコロは自分で「ストップ！」を押して止めます。</li>
           <li>青い駅でお金がもらえ、赤い駅で払い、黄色い駅でカードがもらえます。金額やカードはルーレットを止めて決まります。</li>
           <li>屋根のある駅は物件駅。物件を買うと毎年3月の決算で収益が入ります。全部買うと独占で2倍。</li>
-          <li>貧乏神を持ったまま他の社長を追い越すと、なすりつけられます。</li>
+          <li>トクメイに取り憑かれた社長が他の社長を追い越すとなすりつけられ、ほかの社長がトクメイのいる駅を通ると乗り移ります。</li>
         </ul>
       </details>
     </div>
@@ -582,7 +594,7 @@ const TEMPL = {
 };
 const SPECIAL = {
   '川島':[['川島駅弁',300,12],['ラーメン横丁',1000,9],['川島地下街',6000,6],['川島中央ホテル',15000,4],['川島百貨店',30000,3],['川島タワー',60000,2]],
-  '下港':[['下港かまぼこ',200,12],['下港朝市',800,9],['下港漁港',4000,6],['下港造船所',18000,4],['下港フェリー',40000,3]],
+  '下港':[['下港かまぼこ',200,12],['下港朝市',800,9],['下港漁港',4000,6],['下港造船所',18000,4],['下港フェリー',40000,3],['藍原旅客鉄道団結小屋',2500,8]],
   '東島':[['東島たい焼き',150,12],['東島アーケード',2000,7],['ショッピングモール',10000,5],['東島スタジアム',30000,3]],
   '鳶島新都心':[['新都心カフェ',500,8],['オフィスビル',8000,5],['タワーマンション',22000,4],['国際会議場',50000,2]],
   '福川工業団地':[['部品工場',1000,8],['製鉄所',12000,5],['自動車工場',35000,4]],
@@ -609,7 +621,7 @@ const CARDS = {
   jokou:    {name:'徐行運転カード',desc:'他の全員が3ターン急行系カードを使えなくなる',w:4},
   heli:     {name:'ヘリ禁止カード',desc:'他の全員が3ターンぶっとびカードを使えなくなる',w:3},
   fuuin:    {name:'ふういんカード',desc:'他の全員が3ターンカードを使えなくなる',w:3},
-  katana:   {name:'刀狩カード',desc:'相手のカードを1枚もらう（たまにもう1枚）',choose:'player',w:5},
+  katana:   {name:'刀狩カード',desc:'相手のカードから1枚えらんでもらう（たまにもう1枚）',choose:'player',w:5},
   shuyukin: {name:'周遊禁止カード',desc:'他の全員の周遊カードをふつうのカードにする',w:3},
   tokusei:  {name:'徳政令カード',desc:'全員の借金をゼロにする',w:4},
   tokkae:   {name:'とっかえっこカード',desc:'相手と所持金を交換する（借金中は使えない）',choose:'player',w:3},
@@ -685,6 +697,8 @@ const EVENTS = [
 ];
 const EVENT_RATE = 0.35;
 const MAX_PLAYERS = 8;
+// 藍原旅客鉄道団結小屋：下港に止まると1/3で訪問イベント
+const AIHARA_RATE = 1/3, AIHARA_RANGE = 10, AIHARA_MUL = 1.2, AIHARA_TURNS = 2;
 const PLAYER_COLORS = ['#e53935','#1e6fe0','#2e9e48','#f08c00','#8e3cc8','#00897b','#d81b8c','#795548'];
 // 列車の見た目（形式・車体色・帯色）
 const TRAIN_TYPES = {
@@ -743,7 +757,7 @@ function ownedKeys(s,i){ return Object.keys(s.owners).filter(k=>s.owners[k]===i)
 function income(s,i){
   let sum=0;
   const sts=new Set(ownedKeys(s,i).map(k=>k.split('#')[0]));
-  sts.forEach(st=>{ const mono=isMono(s,st,i); ST[st].props.forEach((p,k)=>{ if(s.owners[st+'#'+k]===i) sum+=p.price*p.rate/100*(mono?2:1)*((s.gmul&&s.gmul[p.genre])||1); }); });
+  sts.forEach(st=>{ const mono=isMono(s,st,i); ST[st].props.forEach((p,k)=>{ if(s.owners[st+'#'+k]===i) sum+=p.price*p.rate/100*(mono?2:1)*((s.gmul&&s.gmul[p.genre])||1)*(s.players[i].aiharaBuff&&DIST['下港'][st]<=AIHARA_RANGE?AIHARA_MUL:1); }); });
   return Math.round(sum);
 }
 
@@ -764,11 +778,11 @@ function setTrain(s,pid,t){
   if(t.color&&BODY_COLORS.includes(t.color)&&!s.players.some((q,j)=>j!==pid&&q.color===t.color)) p.color=t.color;
   return true;
 }
-function resetPlayer(p){ Object.assign(p,{money:1000,pos:'川島',cards:[],rest:0,gyuho:0,jokou:0,heli:0,fuuin:0,guarantor:null}); }
+function resetPlayer(p){ Object.assign(p,{money:1000,pos:'川島',cards:[],rest:0,gyuho:0,jokou:0,heli:0,fuuin:0,guarantor:null,noMinaoka:0,noMinaokaFresh:false,aiharaBuff:false}); }
 function initGame(s){
   shuffle(s.players);
   s.players.forEach(resetPlayer);
-  Object.assign(s,{year:1,month:4,cur:0,owners:{},bonbi:null,phase:'turn',opts:null,roll:null,move:null,lastSettle:null,result:null,turnCards:0,choose:null,bet:null});
+  Object.assign(s,{year:1,month:4,cur:0,owners:{},bonbi:null,king:null,phase:'turn',opts:null,roll:null,move:null,lastSettle:null,result:null,turnCards:0,choose:null,bet:null});
   s.history=[{label:'開始',v:s.players.map((_,i)=>assets(s,i))}];
   resetEconomy(s);
   addLog(s,'川島駅から出発進行！','info');
@@ -799,14 +813,27 @@ function pickDest(s,exclude){
 }
 
 /* ----- 移動候補 ----- */
-function moveOptions(start,steps,dest,prev0){
+// みなおか急行（美奈丘本線）の区間。団結小屋を訪れた社長はしばらく通れない
+const MINAOKA_EDGES=new Set();
+(function(){
+  const other=new Set();
+  LINES.forEach(([ln,c,raw])=>{ const a=raw.filter(n=>typeof n==='string'); for(let i=0;i<a.length-1;i++){ const k1=a[i]+'|'+a[i+1], k2=a[i+1]+'|'+a[i]; if(ln==='美奈丘本線'){ MINAOKA_EDGES.add(k1); MINAOKA_EDGES.add(k2); } else { other.add(k1); other.add(k2); } } });
+  other.forEach(k=>MINAOKA_EDGES.delete(k));
+})();
+function allowedNb(node,prev,p){
+  let nb=ADJ[node];
+  if(p&&p.noMinaoka>0){ const f=nb.filter(n=>!MINAOKA_EDGES.has(node+'|'+n)); if(f.length) nb=f; }
+  return nb.filter(n=>n!==prev); // 来た方向へは戻れない（行き止まりではそこで止まる）
+}
+function moveOptions(start,steps,dest,prev0,pl){
   const res={}, seen=new Set(), path=[start];
   (function dfs(node,prev,rem){
     const key=node+'|'+prev+'|'+rem;
     if(seen.has(key)) return; seen.add(key);
     if(path.length>1 && node===dest){ if(!res[node]) res[node]=path.slice(); return; }
     if(rem===0){ if(!res[node]) res[node]=path.slice(); return; }
-    let nb=ADJ[node].filter(n=>n!==prev); if(!nb.length) nb=ADJ[node];
+    const nb=allowedNb(node,prev,pl);
+    if(!nb.length){ if(path.length>1&&!res[node]) res[node]=path.slice(); return; }
     for(const n of nb){ path.push(n); dfs(n,node,rem-1); path.pop(); }
   })(start,prev0===undefined?null:prev0,steps);
   return res;
@@ -815,16 +842,15 @@ function moveOptions(start,steps,dest,prev0){
 function walkOptions(s){
   const w=s.walk, cur=w.path[w.path.length-1], prev=w.path.length>1?w.path[w.path.length-2]:null;
   const res={};
-  if(w.left<=0){ res[cur]=w.path.slice(); return res; }
-  const o=moveOptions(cur,w.left,s.dest,prev);
+  if(w.left<=0||!allowedNb(cur,prev,s.players[s.cur]).length){ res[cur]=w.path.slice(); return res; }
+  const o=moveOptions(cur,w.left,s.dest,prev,s.players[s.cur]);
   for(const n in o) res[n]=w.path.concat(o[n].slice(1));
   return res;
 }
 function stepChoices(s){
   const w=s.walk; if(!w||w.left<=0) return [];
   const cur=w.path[w.path.length-1], prev=w.path.length>1?w.path[w.path.length-2]:null;
-  let nb=ADJ[cur].filter(n=>n!==prev); if(!nb.length) nb=ADJ[cur]; // 行き止まりは折り返し
-  return nb;
+  return allowedNb(cur,prev,s.players[s.cur]);
 }
 
 /* ----- ルール ----- */
@@ -840,7 +866,7 @@ function applyAction(s,a,token){
     case 'roll': if(s.phase!=='turn') return false; startDice(s,1); return true;
     case 'card': if(s.phase!=='turn') return false; return useCard(s,a.i|0);
     case 'choose': if(s.phase!=='choose') return false; return doChoose(s,a.v);
-    case 'cancel': if(s.phase!=='choose') return false; s.phase='turn'; s.choose=null; return true;
+    case 'cancel': if(s.phase!=='choose'||s.choose.noCancel) return false; s.phase='turn'; s.choose=null; return true;
     case 'go': if(s.phase!=='move'||!s.opts||!s.opts[a.node]) return false; doMove(s,s.opts[a.node],false,s.walk?s.walk.path.length-1:0); return true;
     case 'step': {
       if(s.phase!=='move'||!s.walk||!stepChoices(s).includes(a.to)) return false;
@@ -853,7 +879,7 @@ function applyAction(s,a,token){
       s.walk.path.pop(); s.walk.left++; s.stepSeq=++s.seq; s.opts=walkOptions(s); return true;
     }
     case 'stophere': {
-      if(s.phase!=='move'||!s.walk||s.walk.left!==0) return false;
+      if(s.phase!=='move'||!s.walk||(s.walk.left!==0&&stepChoices(s).length)) return false;
       doMove(s,s.walk.path.slice(),false,s.walk.path.length-1); return true;
     }
     case 'buy': if(s.phase!=='buy') return false; return buyProp(s,a.i|0);
@@ -863,6 +889,16 @@ function applyAction(s,a,token){
     case 'buycard': if(s.phase!=='shop') return false; return buyCard(s,a.k);
     case 'sellcard': if(s.phase!=='shop') return false; return sellCard(s,a.i|0);
     case 'endshop': if(s.phase!=='shop') return false; finishTurn(s); return true;
+    case 'visit': {
+      if(s.phase!=='visit') return false;
+      const node=s.visit.node; s.visit=null;
+      if(a.yes){
+        p.aiharaBuff=true; p.noMinaoka=AIHARA_TURNS; p.noMinaokaFresh=true;
+        addLog(s,`✊ ${p.name}社長は藍原旅客鉄道団結小屋を訪れた！ 下港周辺${AIHARA_RANGE}駅の物件収益がずっと${AIHARA_MUL}倍に（みなおか急行は${AIHARA_TURNS}ターン乗れない）`,'good');
+      } else addLog(s,`${p.name}社長は団結小屋に寄らなかった`,'info');
+      landProp(s,node,true); return true;
+    }
+    case 'discard': if(s.phase!=='discard') return false; return doDiscard(s,a.i|0);
     case 'stop':
       if(s.phase==='roulette'){ doStop(s); return true; }
       if(s.phase==='dice'){ doRoll(s,s.dice.n); return true; }
@@ -902,15 +938,24 @@ function doMove(s,path,warp,animFrom){
   s.move={seq:++s.seq,path,pid:s.cur,warp:!!warp,from:animFrom};
   s.walk=null;
   HOOK_DELAY+=warp?900:(path.length-animFrom)*170+500;
-  if(!warp && s.bonbi===s.cur){
-    for(const n of path.slice(1)){
-      const j=s.players.findIndex((q,jj)=>jj!==s.cur && q.pos===n);
-      if(j>=0){ s.bonbi=j; addLog(s,`👻 ${p.name}社長が ${s.players[j].name}社長に${BONBI_NAME}をなすりつけた！`,'bonbi'); break; }
-    }
-  }
+  if(!warp){ const t=bonbiTransferOn(s,path); if(t){ s.bonbi=t.to; addLog(s,t.text,'bonbi'); } }
   const end=path[path.length-1];
   p.pos=end; s.opts=null;
   land(s,end);
+}
+// 移動中にトクメイが移るか（取り憑かれた社長が他の社長を追い越す／他の社長がトクメイのいる駅を通る）
+function bonbiTransferOn(s,path){
+  if(s.bonbi==null||s.players.length<2) return null;
+  const me=s.cur, p=s.players[me], nm=s.king?'キングトクメイ':BONBI_NAME;
+  for(const n of path.slice(1)){
+    if(s.bonbi===me){
+      const j=s.players.findIndex((q,jj)=>jj!==me&&q.pos===n);
+      if(j>=0) return {to:j,at:n,text:`👻 ${p.name}社長が ${s.players[j].name}社長に${nm}をなすりつけた！`};
+    } else if(s.players[s.bonbi].pos===n){
+      return {to:me,at:n,text:`👻 ${p.name}社長が${s.players[s.bonbi].name}社長のそばを通って、${nm}が乗り移った！`};
+    }
+  }
+  return null;
 }
 function warpTo(s,node){ const p=s.players[s.cur]; doMove(s,[p.pos,node],true); }
 function canBuyAny(s,st){ const p=s.players[s.cur]; return ST[st].props.some((pr,k)=>s.owners[st+'#'+k]===undefined && pr.price<=p.money); }
@@ -934,13 +979,14 @@ function land(s,node){
   }
   startSq(s,node,st.type);
 }
-function canShop(s,node){ const p=s.players[s.cur]; return p.cards.length<MAX_CARDS && SHOPS[node].some(k=>CARD_PRICE[k]<=p.money); }
+function canShop(s,node){ const p=s.players[s.cur]; return SHOPS[node].some(k=>CARD_PRICE[k]<=p.money); }
 function buyCard(s,k){
   const p=s.players[s.cur], node=s.shop.node;
-  if(!SHOPS[node].includes(k)||CARD_PRICE[k]>p.money||p.cards.length>=MAX_CARDS) return false;
+  if(!SHOPS[node].includes(k)||CARD_PRICE[k]>p.money) return false;
   p.money-=CARD_PRICE[k]; p.cards.push({k,u:0});
   addLog(s,`🏪 ${p.name}社長が「${CARDS[k].name}」を ${yen(CARD_PRICE[k])} で買った`,'buy');
   s.shopBought=(s.shopBought||0)+1;
+  needDiscard(s,'shop');
   return true;
 }
 function sellCard(s,i){
@@ -954,8 +1000,13 @@ function sellCard(s,i){
   s.shopSold=(s.shopSold||0)+1;
   return true;
 }
-function landProp(s,node){
+function landProp(s,node,afterVisit){
   const p=s.players[s.cur];
+  if(node==='下港'&&!afterVisit&&!p.aiharaBuff&&Math.random()<AIHARA_RATE){
+    s.phase='visit'; s.visit={node};
+    addLog(s,`🏚 ${p.name}社長、藍原旅客鉄道団結小屋に訪れますか？`,'roulette');
+    HOOK_DELAY+=800; return;
+  }
   if(canBuyAny(s,node)){ s.phase='buy'; return; }
   addLog(s,`${p.name}社長は「${node}」に到着。買える物件はなかった`,'info');
   finishTurn(s);
@@ -1001,7 +1052,7 @@ function doSqStop(s){
   } else if(sq.type==='gamble'){
     if(it.win){ p.money+=sq.bet; addLog(s,`🎉 当たり！ ${p.name}社長の賭け金 ${yen(sq.bet)} が ${yen(sq.bet*2)} になった！`,'good'); }
     else { p.money-=sq.bet; addLog(s,`💸 ハズレ… ${p.name}社長の賭け金 ${yen(sq.bet)} が消えた`,'bad'); settleDebt(s,s.cur); }
-  } else giveCard(s,s.cur,it.k);
+  } else { giveCard(s,s.cur,it.k); if(needDiscard(s,'finishNow')) return; }
   finishTurn(s);
 }
 function doBet(s,amt){
@@ -1022,7 +1073,6 @@ function randomCard(){
 }
 function giveCard(s,i,k,quiet){
   const p=s.players[i]; k=k||randomCard();
-  if(p.cards.length>=MAX_CARDS){ addLog(s,`🟡 ${p.name}社長、カードがいっぱいで「${CARDS[k].name}」を捨てた`,'card'); return false; }
   p.cards.push({k,u:0});
   if(!quiet) addLog(s,`🟡 ${p.name}社長が「${CARDS[k].name}」を手に入れた！`,'card');
   return true;
@@ -1074,13 +1124,28 @@ function consumeCard(s,i){
   addLog(s,`🃏 ${p.name}社長が「${d.name}」を使った！`,'card');
   if(d.shuyu){
     c.u++;
-    if(c.u>=2&&Math.random()<0.3){ p.cards.splice(i,1); addLog(s,`💥 「${d.name}」は${c.u}回使って壊れた！`,'card'); }
+    if(c.u>=3&&Math.random()<0.15){ p.cards.splice(i,1); addLog(s,`💥 「${d.name}」は${c.u}回使って壊れた！`,'card'); }
   } else p.cards.splice(i,1);
+}
+function katanaPick(s,j,bonus){
+  const q=s.players[j], p=s.players[s.cur];
+  if(!q.cards.length){ s.phase='turn'; s.choose=null; needDiscard(s,'turn'); return; }
+  s.phase='choose';
+  s.choose={k:'katana2',kind:'tcard',target:j,bonus,noCancel:true,
+    opts:q.cards.map((c,ix)=>({v:ix,label:CARDS[c.k].name+(CARDS[c.k].shuyu&&c.u?`（${c.u}回使用）`:''),sub:CARDS[c.k].desc}))};
 }
 function doChoose(s,v){
   const ch=s.choose, opt=ch.opts.find(o=>o.v===v);
   if(!opt||opt.dis) return false;
   const p=s.players[s.cur];
+  if(ch.k==='katana2'){
+    const q=s.players[ch.target], c=q.cards[v]; if(!c) return false;
+    q.cards.splice(v,1); p.cards.push(c);
+    addLog(s,`⚔️ ${p.name}社長が${q.name}社長の「${CARDS[c.k].name}」をうばった！`,'card');
+    if(ch.bonus&&q.cards.length){ addLog(s,'⚔️ 刀狩り大成功！ もう1枚えらべる！','card'); katanaPick(s,ch.target,false); }
+    else { s.phase='turn'; s.choose=null; needDiscard(s,'turn'); }
+    return true;
+  }
   let cardObj=null;
   if(ch.kind==='card') cardObj=p.cards[v];
   s.choose=null; s.phase='turn';
@@ -1103,8 +1168,8 @@ function applyCard(s,k,v){
     case 'heli': O.forEach(j=>s.players[j].heli=EFFECT_TURNS); addLog(s,`🚁 ヘリ禁止！ 他の社長は${EFFECT_TURNS}ターンぶっとびカードを使えない`,'card'); return;
     case 'fuuin': O.forEach(j=>s.players[j].fuuin=EFFECT_TURNS); addLog(s,`🔒 ふういん！ 他の社長は${EFFECT_TURNS}ターンカードを使えない`,'card'); return;
     case 'katana': {
-      const q=s.players[v]; let n=Math.random()<0.2?2:1;
-      while(n-->0&&q.cards.length&&p.cards.length<MAX_CARDS){ const c=q.cards.splice(Math.floor(Math.random()*q.cards.length),1)[0]; p.cards.push(c); addLog(s,`⚔️ ${p.name}社長が${q.name}社長の「${CARDS[c.k].name}」をうばった！`,'card'); }
+      // 相手を選んだら、次はもらうカードを選ぶ（たまにもう1枚えらべる）
+      katanaPick(s,v,Math.random()<0.2);
       return;
     }
     case 'shuyukin': O.forEach(j=>s.players[j].cards.forEach(c=>{ if(c.k==='kyuko_s'){ c.k='kyuko'; c.u=0; } if(c.k==='tokkyu_s'){ c.k='tokkyu'; c.u=0; } })); addLog(s,'🚫 周遊禁止！ 他の社長の周遊カードがふつうのカードになった','card'); return;
@@ -1116,7 +1181,7 @@ function applyCard(s,k,v){
     case 'toumin': O.forEach(j=>s.players[j].rest+=2); addLog(s,'💤 冬眠！ 他の社長は2ターンお休み','card'); return;
     case 'mokuteki': addLog(s,'🎯 目的地をもう一度ルーレットで決めなおす！','card'); startRoulette(s,s.dest,null); return;
     case 'rentai': { p.guarantor=v; addLog(s,`📝 ${s.players[v].name}社長が${p.name}社長の連帯保証人になった`,'card'); return; }
-    case 'dubbing': { if(v&&p.cards.length<MAX_CARDS){ p.cards.push({k:v.k,u:0}); addLog(s,`📼 「${CARDS[v.k].name}」を複製した！`,'card'); } return; }
+    case 'dubbing': { if(v){ p.cards.push({k:v.k,u:0}); addLog(s,`📼 「${CARDS[v.k].name}」を複製した！`,'card'); needDiscard(s,'turn'); } return; }
   }
 }
 
@@ -1168,27 +1233,86 @@ function settleDebt(s,i){
 }
 
 /* ----- 貧乏神トクメイ・スリの銀二・デビルカード ----- */
+const GINJI_RATE=0.015; // スリの銀二が出る確率（1ターンあたり）
 const BONBI_SHOP=[['kyuko',50],['gyuho',50],['kamigaoka',100]];
+// 月の通し番号（1年目4月=0）
+function absMonth(s){ return (s.year-1)*12+((s.month-4+12)%12); }
+// トクメイ／キングトクメイが物件を売る（農林物件は売られない）。prefMono=独占している駅を優先
+function bonbiSell(s,i,n,prefMono){
+  const p=s.players[i];
+  let keys=ownedKeys(s,i).filter(k=>ST[k.split('#')[0]].props[+k.split('#')[1]].genre!=='norin');
+  if(!keys.length) return [];
+  keys.sort(()=>Math.random()-.5);
+  if(prefMono){ const mono=k=>isMono(s,k.split('#')[0],i)?0:1; keys.sort((a,b)=>mono(a)-mono(b)); }
+  const sold=[];
+  for(const k of keys.slice(0,n)){ const [st,idx]=k.split('#'), pr=ST[st].props[+idx]; delete s.owners[k]; const got=Math.round(pr.price/2); p.money+=got; sold.push(pr.name); }
+  return sold;
+}
+function pickWeighted(list){ const tot=list.reduce((a,x)=>a+x[0],0); let r=Math.random()*tot; for(const x of list){ r-=x[0]; if(r<0) return x[1]; } return list[list.length-1][1]; }
 function bonbiAct(s,i){
-  const p=s.players[i], r=Math.random();
-  if(r<0.3){
+  const p=s.players[i];
+  // キングトクメイの期限切れ：元に戻ったターンは何もしない
+  if(s.king&&absMonth(s)>=s.king.until){
+    s.king=null;
+    addLog(s,`${BONBI_NAME}「つかれたのねん…」 キングトクメイはトクメイに戻った`,'bonbi_act');
+    return;
+  }
+  if(s.king){ kingAct(s,i); return; }
+  const acts=[
+    [18,'rest'],[22,'gamble'],[15,'shop'],
+    [p.cards.length?13:0,'break'],
+    [ownedKeys(s,i).length?12:0,'sell'],
+    [12,'idle'],
+    [s.year>=2?8:0,'evolve'],
+  ];
+  const a=pickWeighted(acts);
+  if(a==='rest'){
     p.rest+=1;
     addLog(s,`${BONBI_NAME}「謝罪動画で売名行為をしたのねん！」 ${p.name}社長は1回休み`,'bonbi_act');
-  } else if(r<0.65){
+  } else if(a==='gamble'){
     const l=rnd(1,30)*10; p.money-=l;
     addLog(s,`${BONBI_NAME}「ギャンブルしちゃったのねん！」 ${p.name}社長は ${yen(l)} 持っていかれた`,'bonbi_act');
     settleDebt(s,i);
-  } else {
+  } else if(a==='shop'){
     const [k,price]=BONBI_SHOP[Math.floor(Math.random()*BONBI_SHOP.length)];
     p.money-=price;
     addLog(s,`${BONBI_NAME}「${CARDS[k].name}を買ってきたのねん！」 ${p.name}社長は ${yen(price)} 払わされた`,'bonbi_act');
     giveCard(s,i,k,true);
     settleDebt(s,i);
+  } else if(a==='break'){
+    const n=Math.min(p.cards.length,rnd(1,3)), broke=[];
+    for(let k=0;k<n;k++){ const c=p.cards.splice(Math.floor(Math.random()*p.cards.length),1)[0]; broke.push(CARDS[c.k].name); }
+    addLog(s,`${BONBI_NAME}「瓦割りなのねん！」 ${p.name}社長のカードが${n}枚割られた（${broke.join('、')}）`,'bonbi_act');
+  } else if(a==='sell'){
+    const sold=bonbiSell(s,i,rnd(1,3),false);
+    if(sold.length) addLog(s,`${BONBI_NAME}「10円生活になるから売って売って売る！」 ${p.name}社長の物件${sold.length}件が半額で売られた（${sold.join('、')}）`,'bonbi_act');
+    else addLog(s,`${BONBI_NAME}「10円生活になるから売って売って売る！」 …でも売れる物件がなかった`,'bonbi_act');
+  } else if(a==='evolve'){
+    const months=rnd(3,6);
+    s.king={until:absMonth(s)+months};
+    addLog(s,`👑 ${BONBI_NAME}がキングトクメイに進化した！（${months}か月くらい暴れるよ）`,'king');
+  } else {
+    addLog(s,`${BONBI_NAME}「今日はおとなしくしてるのねん」 何も起こらなかった`,'bonbi_act');
+  }
+}
+function kingAct(s,i){
+  const p=s.players[i];
+  const a=pickWeighted([[40,'channel'],[30,'joke'],[30,'wait']]);
+  if(a==='channel'){
+    const dice=Array.from({length:10},()=>rnd(1,6)), sum=dice.reduce((x,y)=>x+y,0), pay=sum*50;
+    p.money-=pay;
+    addLog(s,`キングトクメイ「オレのチャンネル登録もよろしくねーー！！！」 サイコロ10個の合計${sum}×50万円、${p.name}社長は ${yen(pay)} 払わされた`,'king_act');
+    settleDebt(s,i);
+  } else if(a==='joke'){
+    const sold=bonbiSell(s,i,rnd(3,5),true);
+    addLog(s,`キングトクメイ「冗談通じないねー」 `+(sold.length?`${p.name}社長の物件${sold.length}件が売り飛ばされた（${sold.join('、')}）`:'でも売れる物件がなかった'),'king_act');
+  } else {
+    addLog(s,`キングトクメイ「来月まで待ってやる」 今月は何もしなかった`,'king_act');
   }
 }
 function ginji(s,i){
   const p=s.players[i];
-  if(p.money<=0||Math.random()>=0.03) return;
+  if(p.money<=0||Math.random()>=GINJI_RATE) return;
   const r=Math.random(), [frac,label]=r<0.2?[1,'全額']:r<0.6?[0.5,'半額']:[0.25,'4分の1'];
   const t=Math.round(p.money*frac); p.money-=t;
   addLog(s,`🕶 スリの銀二が現れた！ ${p.name}社長の所持金の${label} ${yen(t)} をスられた！`,'ginji');
@@ -1197,7 +1321,7 @@ function devilDrain(s,i){
   const p=s.players[i], n=p.cards.filter(c=>c.k==='devil').length;
   for(let k=0;k<n;k++){ if(p.money<=0) break; const t=Math.max(10,Math.round(p.money*0.1/10)*10); p.money-=t; addLog(s,`👿 デビルカードが${p.name}社長から ${yen(t)} 奪っていった`,'bad'); }
 }
-function tickEffects(p){ ['jokou','heli','fuuin'].forEach(e=>{ if(p[e]>0) p[e]--; }); }
+function tickEffects(p){ ['jokou','heli','fuuin'].forEach(e=>{ if(p[e]>0) p[e]--; }); if(p.noMinaokaFresh) p.noMinaokaFresh=false; else if(p.noMinaoka>0) p.noMinaoka--; }
 
 /* ----- ターン進行 ----- */
 function endOfTurnEvents(s,i,rested){
@@ -1221,17 +1345,49 @@ function advance(s){
   }
   return true;
 }
+// カードが上限を超えたら、捨てるカードを選ぶ。resume=選び終わったあとの続き
+function needDiscard(s,resume){
+  const p=s.players[s.cur];
+  if(p.cards.length<=MAX_CARDS) return false;
+  s.discard={resume,phase:s.phase};
+  s.phase='discard';
+  addLog(s,`🃏 ${p.name}社長、カードがいっぱい！ 捨てるカードを選んでください`,'card');
+  return true;
+}
+function canDiscard(p,i){ const c=p.cards[i]; if(!c) return false; return c.k!=='devil'||p.cards.every(x=>x.k==='devil'); }
+function doDiscard(s,i){
+  const p=s.players[s.cur];
+  if(!canDiscard(p,i)) return false;
+  const c=p.cards.splice(i,1)[0];
+  addLog(s,`🗑 ${p.name}社長は「${CARDS[c.k].name}」を捨てた`,'card');
+  if(p.cards.length>MAX_CARDS) return true; // まだ多いときはもう1枚
+  const d=s.discard; s.discard=null;
+  if(d.resume==='finishNow') finishTurn(s);
+  else if(d.resume==='finish') afterTurn(s);
+  else if(d.resume==='rest'){ if(advance(s)) restLoop(s); }
+  else s.phase=d.phase; // 'turn' / 'shop' はそのまま続ける
+  return true;
+}
 function finishTurn(s){
   endOfTurnEvents(s,s.cur,false);
+  if(needDiscard(s,'finish')) return;
+  afterTurn(s);
+}
+function afterTurn(s){
   s.phase='turn'; s.opts=null; s.choose=null; s.bet=null; s.shop=null; s.shopBought=0; s.shopSold=0; s.turnCards=0;
   if(!advance(s)) return;
+  restLoop(s);
+}
+function restLoop(s){
   let guard=0;
   while(s.players[s.cur].rest>0 && guard++<200){
     const q=s.players[s.cur]; q.rest--;
     addLog(s,`💤 ${q.name}社長はお休み`,'info');
     endOfTurnEvents(s,s.cur,true);
+    if(needDiscard(s,'rest')) return;
     if(!advance(s)) return;
   }
+  s.phase='turn';
   s.turnSeq=++s.seq;
 }
 function settle(s){
@@ -1306,6 +1462,7 @@ function cpuChoose(s){
     case 'toshi': return {type:'choose',v:by(o=>-DIST[o.v][s.dest])};
     case 'gyuho': case 'basho': return {type:'choose',v:by(o=>-DIST[s.players[o.v].pos][s.dest])};
     case 'katana': return {type:'choose',v:by(o=>s.players[o.v].cards.length)};
+    case 'katana2': return {type:'choose',v:by(o=>{ const k=s.players[ch.target].cards[o.v].k; return k==='devil'?-1:(CARD_PRICE[k]||0); })};
     case 'tokkae': case 'bebi': case 'rentai': return {type:'choose',v:by(o=>s.players[o.v].money)};
     case 'dokkai': return {type:'choose',v:by(o=>DIST[s.players[o.v].pos][s.dest])};
     case 'dubbing': return {type:'choose',v:by(o=>{ const k=p.cards[o.v].k; return k==='devil'?-9:(CARDS[k].dice||0)+(k==='bouzu'?5:0); })};
@@ -1315,6 +1472,8 @@ function cpuChoose(s){
 function cpuDecide(s){
   const p=s.players[s.cur];
   if(s.phase==='roulette'||s.phase==='dice'||s.phase==='sqroul') return {type:'stop'};
+  if(s.phase==='visit') return {type:'visit',yes:Math.random()<0.6};
+  if(s.phase==='discard'){ let bi=-1,bv=1e9; p.cards.forEach((c,i)=>{ if(!canDiscard(p,i)) return; const v=CARD_PRICE[c.k]||0; if(v<bv){ bv=v; bi=i; } }); return {type:'discard',i:bi}; }
   if(s.phase==='choose') return cpuChoose(s);
   if(s.phase==='bet'){
     const want=p.money*0.15, amt=BET_OPTIONS.filter(b=>b<=want&&b<=p.money).pop();
@@ -1327,7 +1486,8 @@ function cpuDecide(s){
       const st=ST[n];
       let sc=DIST[n][s.dest]*10 + ({red:7,blue:-3,card:-2,prop:-1,gamble:1,shop:-2})[st.type];
       if(n===s.dest) sc=-1000;
-      if(s.bonbi===s.cur && s.opts[n].slice(1).some(x=>s.players.some((q,j)=>j!==s.cur&&q.pos===x))) sc-=40;
+      const tr=bonbiTransferOn(s,s.opts[n]);
+      if(tr&&s.bonbi===s.cur) sc-=40; else if(tr) sc+=60;
       sc+=Math.random()*3;
       if(sc<bs){ bs=sc; best=n; }
     }
@@ -1354,7 +1514,7 @@ function cpuDecide(s){
   return null;
 }
 
-if(typeof module!=='undefined') module.exports={walkOptions,stepChoices,setTrain,GENRES,genreOf,ST,ADJ,NAMES,DIST,LINES,PROP_STATIONS,CARDS,newLobby,addPlayer,initGame,applyAction,cpuDecide,assets,yen,moveOptions,giveCard,cardBlock,useCard};
+if(typeof module!=='undefined') module.exports={canDiscard,bonbiTransferOn,walkOptions,stepChoices,setTrain,GENRES,genreOf,ST,ADJ,NAMES,DIST,LINES,PROP_STATIONS,CARDS,newLobby,addPlayer,initGame,applyAction,cpuDecide,assets,yen,moveOptions,giveCard,cardBlock,useCard};
 
 /* ===== 川鉄すごろく：画面・通信（桃鉄風UI） ===== */
 const $=s=>document.querySelector(s);
@@ -1365,7 +1525,9 @@ const PREFIX='kawatetsu-sgrk-v1-';
 const TYPE_LABEL={blue:'青マス：お金がもらえる',red:'赤マス：お金を払う',card:'黄マス：カードがもらえる',prop:'物件駅',gamble:'ギャンブル駅：10万〜1億円を賭けて、当たれば2倍',shop:'カード売り場：カードを買える'};
 // 貧乏神トクメイ（ブロック風の白い人形）
 const TOKUMEI_SVG=`<svg viewBox="0 0 24 40" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect x="0" y="16" width="4" height="13" fill="#c9c9c9"/><rect x="20" y="16" width="4" height="13" fill="#c9c9c9"/><rect x="4" y="16" width="16" height="12" fill="#d8d8d8"/><rect x="4" y="27" width="16" height="2" fill="#2f5a1e"/><rect x="4" y="29" width="8" height="11" fill="#dcdcdc"/><rect x="12" y="29" width="8" height="11" fill="#cdcdcd"/><rect x="4" y="0" width="16" height="16" fill="#e4e4e4"/><rect x="7" y="5" width="2.5" height="2.5" fill="#111"/><rect x="14.5" y="5" width="2.5" height="2.5" fill="#111"/><rect x="11" y="9" width="2" height="2" fill="#111"/><rect x="10" y="11" width="1.5" height="1.5" fill="#111"/><rect x="12.5" y="11" width="1.5" height="1.5" fill="#111"/></svg>`;
-function tokumeiIcon(h){ return `<span class="tkm" style="height:${h}px;width:${h*0.6}px">${TOKUMEI_SVG}</span>`; }
+// キングトクメイ：王冠とマントを付けたトクメイ
+const KING_SVG=`<svg viewBox="-4 -12 32 52" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><path d="M-3 18 L4 15 L20 15 L27 18 L28 40 L-4 40 Z" fill="#c81e1e" stroke="#7a1010" stroke-width="1"/>${TOKUMEI_SVG.replace(/^<svg[^>]*>|<\/svg>$/g,'')}<path d="M3 0 L3 -9 L7.5 -4 L12 -11 L16.5 -4 L21 -9 L21 0 Z" fill="#ffd43b" stroke="#b8860b" stroke-width="1"/><rect x="11" y="-6" width="2" height="2" fill="#e5322d"/></svg>`;
+function tokumeiIcon(h,king){ return `<span class="tkm" style="height:${h}px;width:${h*(king?0.62:0.6)}px">${king?KING_SVG:TOKUMEI_SVG}</span>`; }
 
 function sget(kind,k){ try{ return window[kind].getItem(k); }catch(e){ return null; } }
 function sset(kind,k,v){ try{ window[kind].setItem(k,v); }catch(e){} }
@@ -1545,7 +1707,7 @@ async function pump(){
     if(live){ const ks=new Set(newLogs.map(l=>l.kind));
       if(ks.has('buy')) SND.buy(); else if(ks.has('settle')) SND.settle(); else if(ks.has('card')&&!rsnd) SND.card(); }
     if(live) for(const l of newLogs){
-      if(l.kind==='bonbi_act'||l.kind==='ginji'||(l.kind==='bonbi'&&/現れた/.test(l.text))) await eventFlash(l);
+      if(l.kind==='bonbi_act'||l.kind==='king_act'||l.kind==='king'||l.kind==='ginji'||(l.kind==='bonbi'&&/現れた/.test(l.text))) await eventFlash(l);
       else if(l.kind==='news') await newsFlash(l);
     }
     if(s.phase!=='lobby'&&s.phase!=='end'&&s.turnSeq>view.turn){
@@ -1708,7 +1870,7 @@ function trainSvg(p,x,y,cur,bonbi,pid,noName){
   if(cur) s+=`<ellipse cx="0" cy="14" rx="24" ry="6" fill="rgba(0,0,0,.28)"/>`;
   s+=`<g${flip?' transform="scale(-1 1)"':''}>${trainShape(t.type,p.color,t.band)}</g>`;
   if(!noName) s+=`<text x="0" y="-24" text-anchor="middle" class="tname">${esc([...p.name].slice(0,4).join(''))}</text>`;
-  if(bonbi) s+=`<svg x="16" y="-40" width="24" height="40" viewBox="0 0 24 40">${TOKUMEI_SVG.replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg>`;
+  if(bonbi) s+=view.s&&view.s.king?`<svg x="14" y="-56" width="36" height="58" viewBox="-4 -12 32 52">${KING_SVG.replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg>`:`<svg x="16" y="-40" width="24" height="40" viewBox="0 0 24 40">${TOKUMEI_SVG.replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg>`;
   return s+'</g>';
 }
 function renderTokens(){
@@ -1817,6 +1979,7 @@ const SND={
   bonbi(){ tone(330,.7,'sawtooth',.04,0,-180); tone(338,.7,'sawtooth',.035,.02,-190); melody([[0,.45],[196,.14],[185,.14],[175,.36]],'square',.05); },
   news(){ melody([[880,.1],[1175,.1],[1480,.1],[1760,.3]],'triangle',.07); tone(440,.4,'square',.03); },
   chat(){ tone(1046,.06,'sine',.06); tone(1568,.09,'sine',.05,.06); },
+  king(){ melody([[196,.2],[233,.2],[277,.2],[330,.5]],'sawtooth',.06); tone(98,1.2,'square',.05); melody([[0,.9],[523,.1],[659,.1],[784,.35]],'square',.05); },
   ginji(){ melody([[440,.08],[0,.05],[466,.08],[0,.05],[440,.08],[0,.05],[349,.35]],'triangle',.08); },
 };
 /* ---------- 演出 ---------- */
@@ -1905,9 +2068,10 @@ async function eventFlash(l){
   else {
     const m=l.text.match(/「(.*?)」\s*(.*)$/);
     const quote=m?m[1]:'', rest=m?m[2]:l.text.replace(/^👻 /,'');
-    h=`<div class="win evbox bonbi"><div class="evtk">${TOKUMEI_SVG}</div><div><div class="evtitle">貧乏神 ${BONBI_NAME}</div>${quote?`<div class="bubble">${esc(quote)}</div>`:''}<p>${esc(rest)}</p></div></div>`;
+    const king=l.kind==='king_act'||l.kind==='king';
+    h=`<div class="win evbox ${king?'king':'bonbi'}"><div class="evtk${king?' kg':''}">${king?KING_SVG:TOKUMEI_SVG}</div><div><div class="evtitle">${l.kind==='king'?'進化！ キングトクメイ':king?'キングトクメイ':'貧乏神 '+BONBI_NAME}</div>${quote?`<div class="bubble">${esc(quote)}</div>`:''}<p>${esc(rest.replace(/^👑 /,''))}</p></div></div>`;
   }
-  el.innerHTML=h; el.hidden=false; if(l.kind==='ginji') SND.ginji(); else SND.bonbi(); await sleep(RM?1000:2300); el.hidden=true;
+  el.innerHTML=h; el.hidden=false; if(l.kind==='ginji') SND.ginji(); else if(l.kind==='king') SND.king(); else SND.bonbi(); await sleep(RM?1000:(l.kind==='king'?3000:2300)); el.hidden=true;
 }
 async function turnBanner(p){
   const b=$('#banner');
@@ -1981,7 +2145,7 @@ function renderTop(s){
 function renderPlayers(s){
   $('#players').classList.toggle('many',s.players.length>5);
   $('#players').innerHTML=s.players.map((p,i)=>`<li class="win pw${i===s.cur&&s.phase!=='end'?' cur':''}" style="--pc:${p.color}">
-    <div class="pn">${trainIcon(p,'ti pwt')}${esc(p.name)}社長${p.cpu?'<i>CPU</i>':''}${p.away?'<i>代打</i>':''}${s.bonbi===i?`<span class="bb" title="貧乏神${BONBI_NAME}">${tokumeiIcon(18)}</span>`:''}</div>
+    <div class="pn">${trainIcon(p,'ti pwt')}${esc(p.name)}社長${p.cpu?'<i>CPU</i>':''}${p.away?'<i>代打</i>':''}${s.bonbi===i?`<span class="bb" title="${s.king?'キングトクメイ':'貧乏神'+BONBI_NAME}">${tokumeiIcon(18,!!s.king)}</span>`:''}</div>
     <div class="pm${p.money<0?' neg':''}">${yen(p.money)}</div>
     <div class="pa">総資産 ${yen(assets(s,i))}</div>${effTags(p)}</li>`).join('');
 }
@@ -1992,7 +2156,7 @@ function renderCmd(){
   let h='';
   const infoCmds=cmdBtn('目的地を見る','zoomDest()')+cmdBtn('全国地図','fitAll()')+cmdBtn('社長情報','showStats()')+cmdBtn('物件情報','showMyProps()')+cmdBtn('川島ニュース','showNews()')+cmdBtn('できごと','showLog()');
   if(s.phase==='end'){ box.innerHTML=`<div class="ch">ゲーム終了</div>`+cmdBtn('結果を見る','showResult(view.s)')+infoCmds; box.hidden=false; $('#buyWin').hidden=true; return; }
-  $('#buyWin').hidden=!(['buy','choose','bet','shop'].includes(s.phase)&&mine&&!view.busy);
+  $('#buyWin').hidden=!(['buy','choose','bet','shop','visit','discard'].includes(s.phase)&&mine&&!view.busy);
   if(view.busy||s.phase==='roulette'||s.phase==='sqroul'||s.phase==='dice'||!mine){
     const w=view.busy?'':s.phase==='dice'?'サイコロ中…':s.phase==='roulette'||s.phase==='sqroul'?'ルーレット中…':(p.cpu||p.away?'CPUが考え中…':`${esc(p.name)}社長が考え中…`);
     box.innerHTML=`<div class="ch"><span class="pc" style="--pc:${p.color}"></span>${esc(p.name)}社長の番</div>${w?`<p class="wait">${w}</p>`:''}`+infoCmds;
@@ -2009,7 +2173,11 @@ function renderCmd(){
     if(w){
       const cur=w.path[w.path.length-1], c=ST[cur];
       h=`<div class="ch">のこり <b class="yen big">${w.left}</b> 駅　いま：${esc(cur)}</div>`;
-      if(w.left>0){
+      const tr=bonbiTransferOn(s,w.path);
+      if(tr) h+=`<p class="bwarn">${s.bonbi===s.cur?`👻 ${esc(tr.at)}で ${esc(s.players[tr.to].name)}社長を追い越したので、このまま止まるとトクメイをなすりつけられます！`:`⚠ ${esc(tr.at)}でトクメイのいる駅を通りました！ このまま止まるとトクメイが乗り移ります`}</p>`;
+      if(w.left>0&&!stepChoices(s).length){
+        h+=cmdBtn('行き止まりなのでここに止まる',"sendAct({type:'stophere'})",{cls:'main',sub:`${esc(cur)}駅（${TYPE_LABEL[ST[cur].type]||''}）`});
+      } else if(w.left>0){
         h+=stepChoices(s).map(n=>{ const q=edgePts(cur,n)[1]; return cmdBtn(`<span class="ag">${arrowGlyph(q[0]-c.x,q[1]-c.y)}</span>${esc(n)}へ`,`stepTo('${esc(n)}')`,{sub:n===s.dest?'🚩 目的地！':`目的地まで${DIST[n][s.dest]}駅`,cls:n===s.dest?'destcmd':''}); }).join('');
       } else h+=cmdBtn('ここに止まる',"sendAct({type:'stophere'})",{cls:'main',sub:`${esc(cur)}駅（${TYPE_LABEL[ST[cur].type]||''}）`});
       if(w.path.length>1) h+=cmdBtn('ひとつ戻る',"sendAct({type:'undo'})",{cls:'back',sub:'戻ると目が1つ戻ります'});
@@ -2017,11 +2185,12 @@ function renderCmd(){
     } else h=`<div class="ch">どの駅に止まる？</div><p class="wait">光っている駅をタップしてもOK</p><div class="optlist">`;
     Object.keys(s.opts).sort((a,b)=>DIST[a][s.dest]-DIST[b][s.dest]).forEach(n=>{
       const t=ST[n].type, isD=n===s.dest;
-      h+=cmdBtn(`<span class="sqm t-${t}"></span>${esc(n)}`,`sendAct({type:'go',node:'${esc(n)}'})`,{sub:isD?'🚩 目的地！':`目的地まで${DIST[n][s.dest]}駅`,cls:isD?'destcmd':''});
+      const tr=bonbiTransferOn(s,s.opts[n]), tg=tr?(s.bonbi===s.cur?'　👻なすりつけ':'　⚠トクメイが移る'):'';
+      h+=cmdBtn(`<span class="sqm t-${t}"></span>${esc(n)}`,`sendAct({type:'go',node:'${esc(n)}'})`,{sub:(isD?'🚩 目的地！':`目的地まで${DIST[n][s.dest]}駅`)+tg,cls:isD?'destcmd':''});
     });
     h+='</div>';
-  } else if(['buy','choose','bet','shop'].includes(s.phase)){
-    if(s.phase==='buy') renderBuy(s); else if(s.phase==='choose') renderChoose(s); else if(s.phase==='shop') renderShop(s); else renderBet(s);
+  } else if(['buy','choose','bet','shop','visit','discard'].includes(s.phase)){
+    if(s.phase==='discard') renderDiscard(s); else if(s.phase==='buy') renderBuy(s); else if(s.phase==='choose') renderChoose(s); else if(s.phase==='shop') renderShop(s); else if(s.phase==='visit') renderVisit(s); else renderBet(s);
     box.hidden=true; const f=$('#buyWin .cmd:not([disabled])'); if(f&&!document.activeElement.closest('#buyWin,.mbox')) f.focus({preventScroll:true}); return;
   }
   box.innerHTML=h; box.hidden=false;
@@ -2039,19 +2208,35 @@ function renderBuy(s){
   $('#buyWin').innerHTML=h;
 }
 function renderChoose(s){
-  const ch=s.choose, d=CARDS[ch.k];
-  const title={player:'だれに使う？',city:'どの都市へ行く？',num:'何マス進む？',card:'どのカードを複製する？'}[ch.kind];
+  const ch=s.choose, d=CARDS[ch.k==='katana2'?'katana':ch.k];
+  const title=ch.kind==='tcard'?`${esc(s.players[ch.target].name)}社長のカードからえらぶ`:{player:'だれに使う？',city:'どの都市へ行く？',num:'何マス進む？',card:'どのカードを複製する？'}[ch.kind];
   let h=`<div class="bh"><span class="bt">${d.name}</span><span>${title}</span></div><div class="blist">`;
   ch.opts.forEach(o=>{ h+=`<button class="cmd" ${o.dis?'disabled':''} onclick='sendAct({type:"choose",v:${JSON.stringify(o.v)}})'>${esc(o.label)}${o.sub?`<small>${esc(o.sub)}</small>`:''}</button>`; });
-  h+=`</div><button class="cmd back" onclick="sendAct({type:'cancel'})">やめる（カードは使わない）</button>`;
+  h+=`</div>`+(ch.noCancel?'<p class="wait">もらうカードをえらんでください</p>':`<button class="cmd back" onclick="sendAct({type:'cancel'})">やめる（カードは使わない）</button>`);
   $('#buyWin').innerHTML=h;
+}
+function renderDiscard(s){
+  const p=s.players[s.cur], over=p.cards.length-MAX_CARDS;
+  let h=`<div class="bh"><span class="bt">🃏 カードがいっぱい！</span><span>${p.cards.length}/${MAX_CARDS}枚</span></div><p class="vq">捨てるカードを${over>1?`あと${over}枚`:'1枚'}選んでください</p><div class="blist">`;
+  p.cards.forEach((c,i)=>{ const d=CARDS[c.k], ok=canDiscard(p,i), isNew=i>=MAX_CARDS;
+    h+=`<button class="cmd srow" ${ok?'':'disabled'} onclick="sendAct({type:'discard',i:${i}})"><span>${isNew?'<b class="newc">NEW</b>':''}${d.name}${d.shuyu&&c.u?`<em>（${c.u}回使用）</em>`:''}<small>${ok?d.desc:'デビルカードは捨てられません'}</small></span><span class="yen">捨てる</span></button>`; });
+  $('#buyWin').innerHTML=h+'</div>';
+}
+function renderVisit(s){
+  const near=PROP_STATIONS.filter(n=>DIST['下港'][n]<=AIHARA_RANGE);
+  $('#buyWin').innerHTML=`<div class="bh"><span class="bt">🏚 藍原旅客鉄道団結小屋</span></div>
+  <p class="vq">藍原旅客鉄道団結小屋に訪れますか？</p>
+  <ul class="vlist"><li class="good">✊ 下港駅から${AIHARA_RANGE}駅以内の物件駅（${near.length}駅）の収益が、この先ずっと<b>${AIHARA_MUL}倍</b></li>
+  <li class="bad">🚫 そのかわり、みなおか急行（美奈丘本線）に<b>${AIHARA_TURNS}ターン</b>乗れなくなる</li></ul>
+  <p class="wait">対象：${near.map(esc).join('・')}</p>
+  <button class="cmd" onclick="sendAct({type:'visit',yes:true})">訪れる</button><button class="cmd back" onclick="sendAct({type:'visit',yes:false})">訪れない</button>`;
 }
 function renderShop(s){
   const p=s.players[s.cur], node=s.shop.node, full=p.cards.length>=MAX_CARDS, tab=view.shopTab||'buy';
   let h=`<div class="bh"><span class="bt">🏪 ${esc(node)}カード売り場</span><span>所持金 <b class="yen">${yen(p.money)}</b></span></div>
   <div class="tabs"><button class="tab${tab==='buy'?' on':''}" onclick="view.shopTab='buy';renderShop(view.s)">買う</button><button class="tab${tab==='sell'?' on':''}" onclick="view.shopTab='sell';renderShop(view.s)">売る（${p.cards.length}枚）</button></div>
-  <p class="wait">手持ち ${p.cards.length}/${MAX_CARDS}枚${full&&tab==='buy'?'（いっぱいです。売ると空きができます）':''}${tab==='sell'?'　カードは買値の半額で売れます':''}</p><div class="blist">`;
-  if(tab==='buy') SHOPS[node].forEach(k=>{ const pr=CARD_PRICE[k]; h+=`<button class="cmd srow" ${pr>p.money||full?'disabled':''} onclick="sendAct({type:'buycard',k:'${k}'})"><span>${CARDS[k].name}<small>${CARDS[k].desc}</small></span><span class="yen">${yen(pr)}</span></button>`; });
+  <p class="wait">手持ち ${p.cards.length}/${MAX_CARDS}枚${full&&tab==='buy'?'（いっぱいです。買うと捨てるカードを選びます）':''}${tab==='sell'?'　カードは買値の半額で売れます':''}</p><div class="blist">`;
+  if(tab==='buy') SHOPS[node].forEach(k=>{ const pr=CARD_PRICE[k]; h+=`<button class="cmd srow" ${pr>p.money?'disabled':''} onclick="sendAct({type:'buycard',k:'${k}'})"><span>${CARDS[k].name}<small>${CARDS[k].desc}</small></span><span class="yen">${yen(pr)}</span></button>`; });
   else if(!p.cards.length) h+='<p class="wait">売れるカードを持っていません</p>';
   else p.cards.forEach((c,i)=>{ const v=sellPrice(c.k), dv=v<0;
     h+=`<button class="cmd srow" ${dv&&p.money<-v?'disabled':''} onclick="sendAct({type:'sellcard',i:${i}})"><span>${CARDS[c.k].name}${CARDS[c.k].shuyu&&c.u?`<em>（${c.u}回使用）</em>`:''}<small>${dv?'引き取り料を払って処分します':CARDS[c.k].desc}</small></span><span class="${dv?'neg':'yen'}">${dv?'−'+yen(-v):'+'+yen(v)}</span></button>`; });
@@ -2072,6 +2257,8 @@ function effTags(p){
   if(p.jokou>0) t.push(`🚧徐行${p.jokou}`);
   if(p.heli>0) t.push(`🚁ヘリ禁${p.heli}`);
   if(p.fuuin>0) t.push(`🔒封印${p.fuuin}`);
+  if(p.noMinaoka>0) t.push(`🚫みなおか${p.noMinaoka}`);
+  if(p.aiharaBuff) t.push('✊団結');
   const dv=(p.cards||[]).filter(c=>c.k==='devil').length; if(dv) t.push(`👿デビル${dv>1?dv:''}`);
   return t.length?`<div class="eff">${t.map(x=>`<span>${x}</span>`).join('')}</div>`:'';
 }
@@ -2132,7 +2319,7 @@ function showMyProps(){
   const keys=ownedKeys(s,i);
   let h=`<h3>${esc(p.name)}社長の物件</h3>`;
   if(!keys.length) h+='<p class="note">まだ物件を持っていません。四角い屋根の駅に止まると買えます。</p>';
-  else h+='<table class="tbl"><tr><th>駅</th><th>物件名</th><th>価格</th><th>収益率</th></tr>'+keys.map(k=>{ const [st,idx]=k.split('#'), pr=ST[st].props[+idx]; return `<tr><td>${esc(st)}${isMono(s,st,i)?'👑':''}</td><td>${gtag(pr.genre)}${esc(pr.name)}</td><td class="yen">${yen(pr.price)}</td><td>${pr.rate}%${gmulTag(s,pr.genre)}</td></tr>`; }).join('')+`</table><p class="note">🌾農林物件は借金になっても売られません。今の決算見込み（ニュースの影響込み）：<span class="yen">${yen(income(s,i))}</span></p>`;
+  else h+='<table class="tbl"><tr><th>駅</th><th>物件名</th><th>価格</th><th>収益率</th></tr>'+keys.map(k=>{ const [st,idx]=k.split('#'), pr=ST[st].props[+idx]; return `<tr><td>${esc(st)}${isMono(s,st,i)?'👑':''}</td><td>${gtag(pr.genre)}${esc(pr.name)}</td><td class="yen">${yen(pr.price)}</td><td>${pr.rate}%${gmulTag(s,pr.genre)}</td></tr>`; }).join('')+`</table>${p.aiharaBuff?`<p class="note">✊ 団結小屋を訪れたので、下港から${AIHARA_RANGE}駅以内の物件の収益は${AIHARA_MUL}倍です。</p>`:''}<p class="note">🌾農林物件は借金になっても売られません。今の決算見込み（ニュースの影響込み）：<span class="yen">${yen(income(s,i))}</span></p>`;
   if(p.cards.length) h+='<h4>カード</h4><ul class="cardlist">'+p.cards.map(c=>`<li><b>${CARDS[c.k].name}${CARDS[c.k].shuyu&&c.u?`（${c.u}回使用）`:''}</b><small>${CARDS[c.k].desc}</small></li>`).join('')+'</ul>';
   openModal(h);
 }
@@ -2212,7 +2399,7 @@ buildMap();
     if(s&&s.phase==='move'&&s.walk&&canAct(s)&&!view.busy&&$('#modal').hidden&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Backspace','Enter'].includes(e.key)){
       const w=s.walk;
       if(e.key==='Backspace'){ if(w.path.length>1) sendAct({type:'undo'}); e.preventDefault(); return; }
-      if(e.key==='Enter'){ if(w.left===0){ sendAct({type:'stophere'}); e.preventDefault(); } return; }
+      if(e.key==='Enter'){ if(w.left===0||!stepChoices(s).length){ sendAct({type:'stophere'}); e.preventDefault(); } return; }
       const k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key], cur=w.path[w.path.length-1], c=ST[cur];
       let best=null, bd=0.35;
       stepChoices(s).forEach(n=>{ const q=edgePts(cur,n)[1], dx=q[0]-c.x, dy=q[1]-c.y, L=Math.hypot(dx,dy)||1, d=(dx*k[0]+dy*k[1])/L; if(d>bd){ bd=d; best=n; } });
